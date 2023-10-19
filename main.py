@@ -272,6 +272,8 @@ class Main:
             elif self.step4:
                 if self.parking_ticket_selection:
                     self.parking_tickets = self._check_custom_number_selection(mouse_pos)
+                    if not self.parking_ticket_selection:
+                        self._next_step()
                 elif click_three:
                     self.parking_ticket_selection = True
                 elif click_two:
@@ -366,9 +368,10 @@ class Main:
         if click_enter:
             try:
                 number = int(self.amount_txt)
-                self.custom_number = False
+                if self.custom_number:
+                    self.custom_number = False
+                    self._next_step()
                 self.parking_ticket_selection = False
-                self._next_step()
                 return number
             except ValueError:
                 pass
@@ -421,8 +424,7 @@ class Main:
             self.step4 = True
 
         elif self.step4:
-            if self.parking_tickets:
-                self.stats.price_total += self.parking_tickets * self.settings.parking_ticket
+            self.stats.price_total += int(self.parking_tickets) * self.settings.parking_ticket
             self.step4 = False
             self.step5 = True
 

@@ -20,7 +20,7 @@ class TextDisplay:
     def prep_price_total(self):
         """Turn the total price in a rendered image"""
         rounded_price = float(round(self.stats.price_total, 2))
-        price_str = f"Price total: €{rounded_price}"
+        price_str = f"Price total: €{rounded_price:.2f}"
         self.price_image = self.font.render(price_str, True,
                                             self.text_color, self.settings.bg_color)
 
