@@ -4,7 +4,13 @@ from button import Button
 from text_box import TextBox
 from txt_display import TextDisplay
 from price_stats import PriceStats
+from make_ticket import Ticket
+from print_doc import PrintDoc
+from pathlib import Path
+import json
 import sys
+import shutil
+import os
 
 
 class Main:
@@ -60,9 +66,10 @@ class Main:
         self.text_box = TextBox(self)
         self.amount_txt = ''
 
-        # Initialize price memory and text
+        # Initialize assets
         self.stats = PriceStats(self)
         self.txt = TextDisplay(self)
+        self.doc = PrintDoc(self)
 
         # Define the steps and set step 1 on active, rest inactive
         self.step1 = True
@@ -173,8 +180,10 @@ class Main:
                 self.txt.text(f"4-18 years old: {self.stats.age2} in total", y=240)
                 self.txt.text(f"19-64 years old: {self.stats.age3} in total", y=180)
                 self.txt.text(f"65+ years old: {self.stats.age4} in total", y=120)
-                if len(self.stats.agegroup) >= 5: discount = "Yes"
-                else: discount = "No"
+                if len(self.stats.agegroup) >= 5:
+                    discount = "Yes"
+                else:
+                    discount = "No"
                 self.txt.text(f"Group discount? {discount}", y=60)
                 self.txt.text(f"Is this correct?", y=-60)
 
@@ -188,7 +197,7 @@ class Main:
 
                 # Draw the question on the screen.
                 self.txt.text(f"Would you like to buy a parking ticket as well for €"
-                                  f"{self.settings.parking_ticket:.2f}?")
+                              f"{self.settings.parking_ticket:.2f}?")
 
                 self.txt.show_price()
 
@@ -202,7 +211,7 @@ class Main:
 
                 # Draw the text for this step.
                 self.txt.text(f"Your total will come out to be €{self.stats.price_total:.2f}")
-                
+
         if self.custom_number:
             self._custom_number_selection(mouse_pos)
 
@@ -284,18 +293,55 @@ class Main:
 
             elif self.step5:
                 # Clicking on cancel will reset the program and start you at the front
-                # Clicking on pay currently only closes the program, need to add ticket handling there
                 if click_two:
                     self.step1 = True
                     self.step5 = False
                 if click_four:
-                    # Closes program, this is where ticket handling will need to be added
-                    pygame.quit()
-                    sys.exit()
+                    # Making and printing the tickets on a Word document
+                    for _ in range(self.stats.age1):
+                        Ticket("Age 0-3", self.settings.babies, self.stats.ticket_id)
+                        self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
+                        self.stats.ticket_id += 1
+                    for _ in range(self.stats.age2):
+                        Ticket("Age 4-18", self.settings.kids, self.stats.ticket_id)
+                        self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
+                        self.stats.ticket_id += 1
+                    for _ in range(self.stats.age3):
+                        Ticket("Age 19-64", self.settings.adults, self.stats.ticket_id)
+                        self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
+                        self.stats.ticket_id += 1
+                    for _ in range(self.stats.age4):
+                        Ticket("Age 65+", self.settings.elderly, self.stats.ticket_id)
+                        self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
+                        self.stats.ticket_id += 1
+
+                    self.doc.print_doc(self.stats.ticket_id)
+
+                    # Save the ticket ID so each guest gets unique ID's
+                    path = Path('id_tickets.json')
+                    ticket_id = json.dumps(self.stats.ticket_id)
+                    path.write_text(ticket_id)
+
+                    self._move_files_to_dir()
 
         # Run selection for larger groups
         if self.custom_number:
             self.amount = self._check_custom_number_selection(mouse_pos)
+
+    @staticmethod
+    def _move_files_to_dir():
+        """Move the files made into their respective directory"""
+        source = "C:/Users/Admin/Documents/GitHub/Amusement-park"
+        dest1 = "C:/Users/Admin/Documents/GitHub/Amusement-park/ticket_images/"
+        dest2 = "C:/Users/Admin/Documents/GitHub/Amusement-park/checkout_doc/"
+        files = os.listdir(source)
+
+        for f in files:
+            if f.startswith("ticket"):
+                shutil.move(f, dest1)
+            if f.startswith("checkout"):
+                shutil.move(f, dest2)
+
 
     def _custom_number_selection(self, mouse_pos):
         """Make a menu for selecting a custom amount"""
@@ -368,11 +414,12 @@ class Main:
         if click_enter:
             try:
                 number = int(self.amount_txt)
-                if self.custom_number:
-                    self.custom_number = False
-                    self._next_step()
-                self.parking_ticket_selection = False
-                return number
+                if number:
+                    if self.custom_number:
+                        self.custom_number = False
+                        self._next_step()
+                    self.parking_ticket_selection = False
+                    return number
             except ValueError:
                 pass
         if click_cancel:
