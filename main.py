@@ -334,14 +334,13 @@ class Main:
         source = "C:/Users/Admin/Documents/GitHub/Amusement-park"
         dest1 = "C:/Users/Admin/Documents/GitHub/Amusement-park/ticket_images/"
         dest2 = "C:/Users/Admin/Documents/GitHub/Amusement-park/checkout_doc/"
-        files = os.listdir(source)
 
+        files = os.listdir(source)
         for f in files:
             if f.startswith("ticket"):
                 shutil.move(f, dest1)
             if f.startswith("checkout"):
                 shutil.move(f, dest2)
-
 
     def _custom_number_selection(self, mouse_pos):
         """Make a menu for selecting a custom amount"""
