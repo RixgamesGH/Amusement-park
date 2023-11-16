@@ -116,6 +116,12 @@ class Ticket:
         qr.add_data('https://www.youtube.com/watch?v=dQw4w9WgXcQ')  # Replace with your URL or data
         qr.make(fit=True)
         qr_img = qr.make_image(fill_color=(240, 159, 31), back_color=self.background_color)
-        self.ticket.paste(qr_img, (36, 150))
+        self.ticket.paste(qr_img, (36, 138))
 
         self.ticket.save(f"ticket{ticket_id}.png")
+
+
+# Some code, so I can run a test outside the main loop to see how the ticket will look
+if __name__ == "__main__":
+    run = Ticket("test", 5, "_testexample")
+    run.ticket.show()
