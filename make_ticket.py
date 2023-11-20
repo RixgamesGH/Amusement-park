@@ -102,8 +102,12 @@ class Ticket:
         self.draw.text((220, 170), f"Price: €{price:.2f}", fill=self.text_color, font=self.font)
         self.draw.text((220, 200), f"{date}*", fill=self.text_color, font=self.font)
         self.draw.text((220, 230), f"Ticket ID: {ticket_id}", fill=self.text_color, font=self.font)
-        self.draw.text((550, 256), "*ticket is valid for 7 days after purchase",
-                       fill=self.text_color, font=self.small_font)
+        if ticket_type != "Parking ticket":
+            self.draw.text((550, 256), "*ticket is valid for 7 days after purchase",
+                           fill=self.text_color, font=self.small_font)
+        else:
+            self.draw.text((550, 256), "*ticket only valid on day of purchase",
+                           fill=self.text_color, font=self.small_font)
 
         # Create a QR code
         qr = qrcode.QRCode(
@@ -118,10 +122,13 @@ class Ticket:
         qr_img = qr.make_image(fill_color=(240, 159, 31), back_color=self.background_color)
         self.ticket.paste(qr_img, (36, 138))
 
-        self.ticket.save(f"ticket{ticket_id}.png")
+        if ticket_type == "Parking ticket":
+            self.ticket.save(f"parking_ticket{ticket_id}.png")
+        else:
+            self.ticket.save(f"ticket{ticket_id}.png")
 
 
 # Some code, so I can run a test outside the main loop to see how the ticket will look
 if __name__ == "__main__":
-    run = Ticket("test", 5, "_testexample")
+    run = Ticket("test", 5, "_example")
     run.ticket.show()

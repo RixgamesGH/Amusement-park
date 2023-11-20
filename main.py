@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 import pygame
 from settings import Settings
 from button import Button
@@ -6,8 +8,6 @@ from txt_display import TextDisplay
 from price_stats import PriceStats
 from make_ticket import Ticket
 from print_doc import PrintDoc
-from pathlib import Path
-import json
 import sys
 import shutil
 import os
@@ -287,6 +287,7 @@ class Main:
                     self.parking_ticket_selection = True
                 elif click_two:
                     self.stats.price_total += self.settings.parking_ticket
+                    self.parking_tickets = 1
                     self._next_step()
                 elif click_four:
                     self._next_step()
@@ -315,12 +316,23 @@ class Main:
                         self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
                         self.stats.ticket_id += 1
 
-                    self.doc.print_doc(self.stats.ticket_id)
+                    self.doc.print_doc(self.stats.ticket_id, "ticket")
+
+                    path = Path('id_tickets.json')
+                    txt = json.dumps(self.stats.ticket_id)
+                    path.write_text(txt)
+
+                    for _ in range(self.parking_tickets):
+                        Ticket("Parking ticket", self.settings.parking_ticket, self.stats.parking_ticket_id)
+                        self.doc.add_ticket(f"parking_ticket{self.stats.parking_ticket_id}.png")
+                        self.stats.parking_ticket_id += 1
+
+                    self.doc.print_doc(self.stats.parking_ticket_id, "parking_ticket")
 
                     # Save the ticket ID so each guest gets unique ID's
-                    path = Path('id_tickets.json')
-                    ticket_id = json.dumps(self.stats.ticket_id)
-                    path.write_text(ticket_id)
+                    path = Path('id_parking_tickets.json')
+                    txt = json.dumps(self.stats.parking_ticket_id)
+                    path.write_text(txt)
 
                     self._move_files_to_dir()
 
@@ -334,6 +346,7 @@ class Main:
         source = "C:/Users/Admin/Documents/GitHub/Amusement-park"
         dest1 = "C:/Users/Admin/Documents/GitHub/Amusement-park/ticket_images/"
         dest2 = "C:/Users/Admin/Documents/GitHub/Amusement-park/checkout_doc/"
+        dest3 = "C:/Users/Admin/Documents/GitHub/Amusement-park/parking_ticket_images"
 
         files = os.listdir(source)
         for f in files:
@@ -341,6 +354,8 @@ class Main:
                 shutil.move(f, dest1)
             if f.startswith("checkout"):
                 shutil.move(f, dest2)
+            if f.startswith("parking"):
+                shutil.move(f, dest3)
 
     def _custom_number_selection(self, mouse_pos):
         """Make a menu for selecting a custom amount"""

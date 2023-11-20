@@ -13,10 +13,16 @@ class PriceStats:
         try:
             path = Path('id_tickets.json')
             contents = path.read_text()
-            ticket_id = json.loads(contents)
-            self.ticket_id = ticket_id
+            self.ticket_id = json.loads(contents)
         except FileNotFoundError:
             self.ticket_id = 1
+
+        try:
+            path = Path('id_parking_tickets.json')
+            contents = path.read_text()
+            self.parking_ticket_id = json.loads(contents)
+        except FileNotFoundError:
+            self.parking_ticket_id = 1
 
     def reset_stats(self):
         """Initialize the price when starting a new selection"""
