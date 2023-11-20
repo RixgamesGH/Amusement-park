@@ -298,43 +298,10 @@ class Main:
                     self.step1 = True
                     self.step5 = False
                 if click_four:
-                    # Making and printing the tickets on a Word document
-                    for _ in range(self.stats.age1):
-                        Ticket("Age 0-3", self.settings.babies, self.stats.ticket_id)
-                        self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
-                        self.stats.ticket_id += 1
-                    for _ in range(self.stats.age2):
-                        Ticket("Age 4-18", self.settings.kids, self.stats.ticket_id)
-                        self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
-                        self.stats.ticket_id += 1
-                    for _ in range(self.stats.age3):
-                        Ticket("Age 19-64", self.settings.adults, self.stats.ticket_id)
-                        self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
-                        self.stats.ticket_id += 1
-                    for _ in range(self.stats.age4):
-                        Ticket("Age 65+", self.settings.elderly, self.stats.ticket_id)
-                        self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
-                        self.stats.ticket_id += 1
-
-                    self.doc.print_doc(self.stats.ticket_id, "ticket")
-
-                    path = Path('id_tickets.json')
-                    txt = json.dumps(self.stats.ticket_id)
-                    path.write_text(txt)
-
-                    for _ in range(self.parking_tickets):
-                        Ticket("Parking ticket", self.settings.parking_ticket, self.stats.parking_ticket_id)
-                        self.doc.add_ticket(f"parking_ticket{self.stats.parking_ticket_id}.png")
-                        self.stats.parking_ticket_id += 1
-
-                    self.doc.print_doc(self.stats.parking_ticket_id, "parking_ticket")
-
-                    # Save the ticket ID so each guest gets unique ID's
-                    path = Path('id_parking_tickets.json')
-                    txt = json.dumps(self.stats.parking_ticket_id)
-                    path.write_text(txt)
-
+                    self._generate_tickets()
+                    self._generate_parking_tickets()
                     self._move_files_to_dir()
+                    self._next_step()
 
         # Run selection for larger groups
         if self.custom_number:
@@ -356,6 +323,45 @@ class Main:
                 shutil.move(f, dest2)
             if f.startswith("parking"):
                 shutil.move(f, dest3)
+
+    def _generate_tickets(self):
+        """Making the tickets and printing them on a Word document"""
+        for _ in range(self.stats.age1):
+            Ticket("Age 0-3", self.settings.babies, self.stats.ticket_id)
+            self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
+            self.stats.ticket_id += 1
+        for _ in range(self.stats.age2):
+            Ticket("Age 4-18", self.settings.kids, self.stats.ticket_id)
+            self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
+            self.stats.ticket_id += 1
+        for _ in range(self.stats.age3):
+            Ticket("Age 19-64", self.settings.adults, self.stats.ticket_id)
+            self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
+            self.stats.ticket_id += 1
+        for _ in range(self.stats.age4):
+            Ticket("Age 65+", self.settings.elderly, self.stats.ticket_id)
+            self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
+            self.stats.ticket_id += 1
+
+        self.doc.print_doc(self.stats.ticket_id, "ticket")
+
+        path = Path('id_tickets.json')
+        txt = json.dumps(self.stats.ticket_id)
+        path.write_text(txt)
+
+    def _generate_parking_tickets(self):
+        """Making the parking tickets and printing them on a Word document"""
+        for _ in range(self.parking_tickets):
+            Ticket("Parking ticket", self.settings.parking_ticket, self.stats.parking_ticket_id)
+            self.doc.add_ticket(f"parking_ticket{self.stats.parking_ticket_id}.png")
+            self.stats.parking_ticket_id += 1
+
+        self.doc.print_doc(self.stats.parking_ticket_id, "parking_ticket")
+
+        # Save the ticket ID so each guest gets unique ID's
+        path = Path('id_parking_tickets.json')
+        txt = json.dumps(self.stats.parking_ticket_id)
+        path.write_text(txt)
 
     def _custom_number_selection(self, mouse_pos):
         """Make a menu for selecting a custom amount"""
