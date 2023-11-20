@@ -17,6 +17,7 @@ class PriceStats:
         except FileNotFoundError:
             self.ticket_id = 1
 
+        # This is also the case for parking tickets
         try:
             path = Path('id_parking_tickets.json')
             contents = path.read_text()
