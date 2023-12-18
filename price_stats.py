@@ -25,12 +25,20 @@ class PriceStats:
         except FileNotFoundError:
             self.parking_ticket_id = 1
 
+        # And also for all the receipts
+        try:
+            path = Path('id_receipts.json')
+            contents = path.read_text()
+            self.receipt_id = json.loads(contents)
+        except FileNotFoundError:
+            self.receipt_id = 1
+
     def reset_stats(self):
         """Initialize the price when starting a new selection"""
         self.price_total = 0
-        self.agegroup = []
+        self.agegroups = []
         self.age1 = 0
         self.age2 = 0
         self.age3 = 0
         self.age4 = 0
-        self.image_paths = []
+        self.parking_tickets = 0

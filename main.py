@@ -8,6 +8,7 @@ from txt_display import TextDisplay
 from price_stats import PriceStats
 from make_ticket import Ticket
 from print_doc import PrintDoc
+from make_receipt import Receipt
 import sys
 import shutil
 import os
@@ -24,7 +25,7 @@ class Main:
         self.clock = pygame.time.Clock()
         self.settings = Settings()
 
-        # Making the program run on fullscreen.
+        # Making the program run on full-screen.
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.screen_width = self.screen.get_width()
         self.screen_height = self.screen.get_height()
@@ -70,6 +71,7 @@ class Main:
         self.stats = PriceStats(self)
         self.txt = TextDisplay(self)
         self.doc = PrintDoc(self)
+        self.receipt = Receipt(self)
 
         # Define the steps and set step 1 on active, rest inactive
         self.step1 = True
@@ -78,8 +80,10 @@ class Main:
         self.step3 = False
         self.step4 = False
         self.step5 = False
+        self.step6 = False
+        self.step7 = False
         self.parking_ticket_selection = False
-        self.parking_tickets = 0
+        self.print_receipt = False
 
     def run_program(self):
         """Start the main loop for the program"""
@@ -180,7 +184,7 @@ class Main:
                 self.txt.text(f"4-18 years old: {self.stats.age2} in total", y=240)
                 self.txt.text(f"19-64 years old: {self.stats.age3} in total", y=180)
                 self.txt.text(f"65+ years old: {self.stats.age4} in total", y=120)
-                if len(self.stats.agegroup) >= 5:
+                if len(self.stats.agegroups) >= 5:
                     discount = "Yes"
                 else:
                     discount = "No"
@@ -211,6 +215,14 @@ class Main:
 
                 # Draw the text for this step.
                 self.txt.text(f"Your total will come out to be €{self.stats.price_total:.2f}")
+
+            elif self.step6:
+                # Draw buttons for sixth screen
+                self.B_two.draw_button("Yes")
+                self.B_four.draw_button("No")
+
+                # Draw the text for this step.
+                self.txt.text("Would you like to get the receipt?")
 
         if self.custom_number:
             self._custom_number_selection(mouse_pos)
@@ -250,22 +262,22 @@ class Main:
             elif self.step2:
                 # Select the age per person and get the price
                 if click_one:
-                    self.stats.agegroup.append(1)
+                    self.stats.agegroups.append(1)
                     self.stats.price_total += self.settings.babies
                     self._next_step()
 
                 if click_two:
-                    self.stats.agegroup.append(2)
+                    self.stats.agegroups.append(2)
                     self.stats.price_total += self.settings.kids
                     self._next_step()
 
                 if click_four:
-                    self.stats.agegroup.append(3)
+                    self.stats.agegroups.append(3)
                     self.stats.price_total += self.settings.adults
                     self._next_step()
 
                 if click_five:
-                    self.stats.agegroup.append(4)
+                    self.stats.agegroups.append(4)
                     self.stats.price_total += self.settings.elderly
                     self._next_step()
 
@@ -280,14 +292,13 @@ class Main:
 
             elif self.step4:
                 if self.parking_ticket_selection:
-                    self.parking_tickets = self._check_custom_number_selection(mouse_pos)
+                    self.stats.parking_tickets = self._check_custom_number_selection(mouse_pos)
                     if not self.parking_ticket_selection:
                         self._next_step()
                 elif click_three:
                     self.parking_ticket_selection = True
                 elif click_two:
-                    self.stats.price_total += self.settings.parking_ticket
-                    self.parking_tickets = 1
+                    self.stats.parking_tickets = 1
                     self._next_step()
                 elif click_four:
                     self._next_step()
@@ -300,7 +311,14 @@ class Main:
                 if click_four:
                     self._generate_tickets()
                     self._generate_parking_tickets()
-                    self._move_files_to_dir()
+                    self._next_step()
+
+            elif self.step6:
+                if click_two:
+                    self.print_receipt = True
+                    self._next_step()
+                if click_four:
+                    self.print_receipt = False
                     self._next_step()
 
         # Run selection for larger groups
@@ -310,12 +328,13 @@ class Main:
     @staticmethod
     def _move_files_to_dir():
         """Move the files made into their respective directory"""
-        source = "C:/Users/Admin/Documents/GitHub/Amusement-park"
-        dest1 = "C:/Users/Admin/Documents/GitHub/Amusement-park/ticket_images/"
-        dest2 = "C:/Users/Admin/Documents/GitHub/Amusement-park/checkout_doc/"
-        dest3 = "C:/Users/Admin/Documents/GitHub/Amusement-park/parking_ticket_images"
+        current_dir = os.getcwd()
+        dest1 = os.path.join(current_dir, "ticket_images")
+        dest2 = os.path.join(current_dir, "checkout_doc")
+        dest3 = os.path.join(current_dir, "parking_ticket_images")
+        dest4 = os.path.join(current_dir, "receipts")
 
-        files = os.listdir(source)
+        files = os.listdir()
         for f in files:
             if f.startswith("ticket"):
                 shutil.move(f, dest1)
@@ -323,6 +342,8 @@ class Main:
                 shutil.move(f, dest2)
             if f.startswith("parking"):
                 shutil.move(f, dest3)
+            if f.startswith("receipt"):
+                shutil.move(f, dest4)
 
     def _generate_tickets(self):
         """Making the tickets and printing them on a Word document"""
@@ -351,7 +372,7 @@ class Main:
 
     def _generate_parking_tickets(self):
         """Making the parking tickets and printing them on a Word document"""
-        for _ in range(self.parking_tickets):
+        for _ in range(self.stats.parking_tickets):
             Ticket("Parking ticket", self.settings.parking_ticket, self.stats.parking_ticket_id)
             self.doc.add_ticket(f"parking_ticket{self.stats.parking_ticket_id}.png")
             self.stats.parking_ticket_id += 1
@@ -365,21 +386,7 @@ class Main:
 
     def _custom_number_selection(self, mouse_pos):
         """Make a menu for selecting a custom amount"""
-        # Make the text color change when you hover over a button
-        self._hover_text(self.N_1, mouse_pos)
-        self._hover_text(self.N_2, mouse_pos)
-        self._hover_text(self.N_3, mouse_pos)
-        self._hover_text(self.N_4, mouse_pos)
-        self._hover_text(self.N_5, mouse_pos)
-        self._hover_text(self.N_6, mouse_pos)
-        self._hover_text(self.N_7, mouse_pos)
-        self._hover_text(self.N_8, mouse_pos)
-        self._hover_text(self.N_9, mouse_pos)
-        self._hover_text(self.N_0, mouse_pos)
-        self._hover_text(self.N_enter, mouse_pos)
-        self._hover_text(self.N_cancel, mouse_pos)
-
-        # Pull up the menu for custom number selection
+        # Draw the buttons for the custom selection
         self.N_1.draw_button("1")
         self.N_2.draw_button("2")
         self.N_3.draw_button("3")
@@ -396,8 +403,22 @@ class Main:
         else:
             self.N_cancel.draw_button("remove")
 
+        # Make the text color change when you hover over a button
+        self._hover_text(self.N_1, mouse_pos)
+        self._hover_text(self.N_2, mouse_pos)
+        self._hover_text(self.N_3, mouse_pos)
+        self._hover_text(self.N_4, mouse_pos)
+        self._hover_text(self.N_5, mouse_pos)
+        self._hover_text(self.N_6, mouse_pos)
+        self._hover_text(self.N_7, mouse_pos)
+        self._hover_text(self.N_8, mouse_pos)
+        self._hover_text(self.N_9, mouse_pos)
+        self._hover_text(self.N_0, mouse_pos)
+        self._hover_text(self.N_enter, mouse_pos)
+        self._hover_text(self.N_cancel, mouse_pos)
+
     def _check_custom_number_selection(self, mouse_pos):
-        # Draw the buttons for the custom selection
+        """Check if a button from the custom number selection is clicked"""
         click_n1 = self.N_1.rect.collidepoint(mouse_pos)
         click_n2 = self.N_2.rect.collidepoint(mouse_pos)
         click_n3 = self.N_3.rect.collidepoint(mouse_pos)
@@ -466,13 +487,13 @@ class Main:
             self.person.pop()
             self.amount -= 1
             if self.amount == 0:
-                if len(self.stats.agegroup) >= self.settings.minimum_groupsize_discount:
+                if len(self.stats.agegroups) >= self.settings.minimum_groupsize_discount:
                     self.stats.price_total -= self.settings.discount
                     if self.stats.price_total < 0:
                         self.stats.price_total = 0
                 else:
                     pass
-                for x in self.stats.agegroup:
+                for x in self.stats.agegroups:
                     if x == 1:
                         self.stats.age1 += 1
                     if x == 2:
@@ -491,9 +512,28 @@ class Main:
             self.step4 = True
 
         elif self.step4:
-            self.stats.price_total += int(self.parking_tickets) * self.settings.parking_ticket
+            self.stats.price_total += int(self.stats.parking_tickets) * self.settings.parking_ticket
             self.step4 = False
             self.step5 = True
+
+        elif self.step5:
+            self.step5 = False
+            self.step6 = True
+
+        elif self.step6:
+            self.receipt.make_receipt()
+
+            if self.print_receipt:
+                os.startfile(f"receipt{self.stats.receipt_id}.docx")
+
+            self.stats.receipt_id += 1
+            path = Path('id_receipts.json')
+            txt = json.dumps(self.stats.receipt_id)
+            path.write_text(txt)
+
+            self._move_files_to_dir()
+            self.step6 = False
+            self.step7 = True
 
     def _update_screen(self):
         """This will draw the objects on the screen"""

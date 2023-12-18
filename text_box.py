@@ -3,13 +3,13 @@ import pygame
 
 class TextBox:
     """Text box for inputting numbers for amount of people"""
-    def __init__(self, ap):
+    def __init__(self, ap, width=425, height=125):
         """Initialize assets for the text box"""
         self.screen = ap.screen
         self.screen_rect = self.screen.get_rect()
         self.settings = ap.settings
 
-        self.width, self.height = 425, 125
+        self.width, self.height = width, height
         self.textbox_color = self.settings.textbox_color
         self.text_color = self.settings.text_color
         self.font = pygame.font.SysFont(None, 52)

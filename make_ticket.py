@@ -29,14 +29,14 @@ class Ticket:
         self.y4 = 0
         self.opacity = 255
 
-        while self.opacity >= 0:
+        while self.opacity >= 153:
             self.draw.polygon(([(self.y1, 20), (self.y2, 20), (self.y3, 280), (self.y4, 280)]),
-                              (86, 96, 118, self.opacity))
+                              (43, 48, 58, self.opacity))
             self.y1 += 20
             self.y2 += 20
             self.y3 += 20
             self.y4 += 20
-            self.opacity -= 5
+            self.opacity -= 2
 
         # Load the image for the ticket (replace 'image.jpg' with your image file)
         self.image = Image.open('amusement_park.png')
