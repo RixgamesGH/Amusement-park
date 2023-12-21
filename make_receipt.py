@@ -26,7 +26,7 @@ class Receipt:
         if self.stats.parking_tickets != 0:
             self.items[f"{self.stats.parking_tickets}x Ticket Parking"] = \
                 float(f"{self.settings.parking_ticket * self.stats.parking_tickets}")
-        if len(self.stats.agegroups) >= 5:
+        if self.stats.total_people >= 5:
             self.items["Group discount"] = float(f"{self.settings.discount * -1}")
 
         receipt_text = self._generate_receipt_template()

@@ -36,6 +36,7 @@ class Main:
         self.B_three = Button(self, 0, -250)
         self.B_four = Button(self, -275, -250)
         self.B_five = Button(self, -550, -250)
+        self.B_multiselect = Button(self, -0, -150)
 
         # Define the (number) buttons for custom amount selection
         self.N_1 = Button(self, 150, 150,
@@ -70,7 +71,7 @@ class Main:
         # Initialize assets
         self.stats = PriceStats(self)
         self.txt = TextDisplay(self)
-        self.doc = PrintDoc(self)
+        self.doc = PrintDoc()
         self.receipt = Receipt(self)
 
         # Define the steps and set step 1 on active, rest inactive
@@ -84,6 +85,7 @@ class Main:
         self.step7 = False
         self.parking_ticket_selection = False
         self.print_receipt = False
+        self.multiselect = 1
 
     def run_program(self):
         """Start the main loop for the program"""
@@ -127,7 +129,7 @@ class Main:
         else:
             button.text_color = self.settings.text_color
 
-    def _draw_buttons(self):
+    def _draw_buttons_and_text(self):
         """Draw button selection and text on screen"""
         # Get the mouse position
         mouse_pos = pygame.mouse.get_pos()
@@ -139,6 +141,7 @@ class Main:
             self._hover_text(self.B_three, mouse_pos)
             self._hover_text(self.B_four, mouse_pos)
             self._hover_text(self.B_five, mouse_pos)
+            self._hover_text(self.B_multiselect, mouse_pos)
 
             if self.step1:
                 # Draw buttons for first selection screen
@@ -157,6 +160,7 @@ class Main:
                 self.B_two.draw_button("4-18 years old")
                 self.B_four.draw_button("19-64 years old")
                 self.B_five.draw_button("65+ years old")
+                self.B_multiselect.draw_button(f"Multiselect {self.multiselect}x")
 
                 # Draw the question on the screen.
                 if self.first_person:
@@ -167,12 +171,16 @@ class Main:
                         amount -= 1
                     self.first_person = False
 
-                # Isolate the last number in the list and display the question.
-                for x in self.person[-1:]:
-                    self.txt.text(f"Under what age-group does person {x} fall?")
+                self.txt.text(f"Click multiselect to add more people to an age group at once ({len(self.person)} left)")
 
                 # Draw the total price at the bottom of the screen
                 self.txt.show_price()
+
+                # Show how many of each agegroup you have selected already under the buttons
+                self.txt.text(f"{self.stats.age1}", 550, -325)
+                self.txt.text(f"{self.stats.age2}", 275, -325)
+                self.txt.text(f"{self.stats.age3}", -275, -325)
+                self.txt.text(f"{self.stats.age4}", -550, -325)
 
             elif self.step3:
                 # Draw buttons for third selection screen.
@@ -184,7 +192,7 @@ class Main:
                 self.txt.text(f"4-18 years old: {self.stats.age2} in total", y=240)
                 self.txt.text(f"19-64 years old: {self.stats.age3} in total", y=180)
                 self.txt.text(f"65+ years old: {self.stats.age4} in total", y=120)
-                if len(self.stats.agegroups) >= 5:
+                if self.stats.total_people >= 5:
                     discount = "Yes"
                 else:
                     discount = "No"
@@ -236,6 +244,7 @@ class Main:
         click_three = self.B_three.rect.collidepoint(mouse_pos)
         click_four = self.B_four.rect.collidepoint(mouse_pos)
         click_five = self.B_five.rect.collidepoint(mouse_pos)
+        click_multiselect = self.B_multiselect.rect.collidepoint(mouse_pos)
 
         if not self.custom_number:
             if self.step1:
@@ -262,24 +271,40 @@ class Main:
             elif self.step2:
                 # Select the age per person and get the price
                 if click_one:
-                    self.stats.agegroups.append(1)
-                    self.stats.price_total += self.settings.babies
+                    self.stats.age1 += self.multiselect
+                    self.stats.price_total += self.settings.babies * self.multiselect
                     self._next_step()
 
                 if click_two:
-                    self.stats.agegroups.append(2)
-                    self.stats.price_total += self.settings.kids
+                    self.stats.age2 += self.multiselect
+                    self.stats.price_total += self.settings.kids * self.multiselect
                     self._next_step()
 
                 if click_four:
-                    self.stats.agegroups.append(3)
-                    self.stats.price_total += self.settings.adults
+                    self.stats.age3 += self.multiselect
+                    self.stats.price_total += self.settings.adults * self.multiselect
                     self._next_step()
 
                 if click_five:
-                    self.stats.agegroups.append(4)
-                    self.stats.price_total += self.settings.elderly
+                    self.stats.age4 += self.multiselect
+                    self.stats.price_total += self.settings.elderly * self.multiselect
                     self._next_step()
+
+                if click_multiselect:
+                    if self.multiselect == 1 and len(self.person) >= 5:
+                        self.B_multiselect.button_color = (200, 200, 200)
+                        self.multiselect = 5
+                    elif self.multiselect == 5 and len(self.person) >= 10:
+                        self.B_multiselect.button_color = (152, 152, 152)
+                        self.multiselect = 10
+                    elif self.multiselect == 10 and len(self.person) >= 50:
+                        self.B_multiselect.button_color = (96, 96, 96)
+                        self.multiselect = 50
+                    elif self.multiselect == 50:
+                        self.B_multiselect.button_color = self.settings.button_color
+                        self.multiselect = 1
+                    else:
+                        pass
 
             elif self.step3:
                 # Select whether the made selection is correct or not.
@@ -479,31 +504,37 @@ class Main:
         if self.step1:
             self.stats.reset_stats()
             self.txt.prep_price_total()
+            self.stats.total_people = self.amount
             self.first_person = True
             self.step1 = False
             self.step2 = True
 
         elif self.step2:
-            self.person.pop()
-            self.amount -= 1
+            try:
+                for _ in range(self.multiselect):
+                    self.person.pop()
+            except IndexError:
+                pass
+            self.amount -= self.multiselect
+
+            if len(self.person) < 5:
+                self.multiselect = 1
+            elif len(self.person) < 10:
+                self.multiselect = 5
+            elif len(self.person) < 50:
+                self.multiselect = 10
+
             if self.amount == 0:
-                if len(self.stats.agegroups) >= self.settings.minimum_groupsize_discount:
+                if self.stats.total_people >= self.settings.minimum_groupsize_discount:
                     self.stats.price_total -= self.settings.discount
                     if self.stats.price_total < 0:
                         self.stats.price_total = 0
                 else:
                     pass
-                for x in self.stats.agegroups:
-                    if x == 1:
-                        self.stats.age1 += 1
-                    if x == 2:
-                        self.stats.age2 += 1
-                    if x == 3:
-                        self.stats.age3 += 1
-                    if x == 4:
-                        self.stats.age4 += 1
+
                 self.step2 = False
                 self.step3 = True
+
             self.txt.prep_price_total()
 
         elif self.step3:
@@ -540,7 +571,7 @@ class Main:
         self.screen.fill(self.settings.bg_color)
         if self.custom_number or self.parking_ticket_selection:
             self.text_box.draw_textbox(self.amount_txt)
-        self._draw_buttons()
+        self._draw_buttons_and_text()
 
         pygame.display.flip()
 

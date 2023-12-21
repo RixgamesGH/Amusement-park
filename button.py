@@ -4,13 +4,13 @@ import pygame
 class Button(pygame.sprite.Sprite):
     """Template for the buttons used in the program"""
 
-    def __init__(self, ap, x, y, width=250, height=80):
+    def __init__(self, main, x, y, width=250, height=80):
         """Initialize the assets of the button"""
         super().__init__()
 
-        self.screen = ap.screen
+        self.screen = main.screen
         self.screen_rect = self.screen.get_rect()
-        self.settings = ap.settings
+        self.settings = main.settings
 
         self.width, self.height = width, height
         self.button_color = self.settings.button_color

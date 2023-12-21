@@ -36,7 +36,7 @@ class TextDisplay:
     def text(self, msg, x=0, y=0):
         msg_str = f"{msg}"
         self.text_image = self.font.render(msg_str, True,
-                                               self.text_color, self.settings.bg_color)
+                                           self.text_color, self.settings.bg_color)
 
         # Display the text on the screen
         self.text_rect = self.text_image.get_rect()

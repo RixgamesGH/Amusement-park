@@ -6,7 +6,7 @@ import os
 
 class PrintDoc:
 
-    def __init__(self, ap):
+    def __init__(self):
         """Make the base of the Word document to print"""
         self.image_paths = []
 
