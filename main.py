@@ -1,17 +1,12 @@
-import json
-from pathlib import Path
 import pygame
 from settings import Settings
 from button import Button
 from text_box import TextBox
 from txt_display import TextDisplay
 from price_stats import PriceStats
-from make_ticket import Ticket
-from print_doc import PrintDoc
-from make_receipt import Receipt
+from generator import Generator
+from backend import *
 import sys
-import shutil
-import os
 
 
 class Main:
@@ -71,8 +66,7 @@ class Main:
         # Initialize assets
         self.stats = PriceStats(self)
         self.txt = TextDisplay(self)
-        self.doc = PrintDoc()
-        self.receipt = Receipt(self)
+        self.generator = Generator(self)
 
         # Define the steps and set step 1 on active, rest inactive
         self.step1 = True
@@ -334,8 +328,8 @@ class Main:
                     self.step1 = True
                     self.step5 = False
                 if click_four:
-                    self._generate_tickets()
-                    self._generate_parking_tickets()
+                    self.generator.generate_tickets()
+                    self.generator.generate_parking_tickets()
                     self._next_step()
 
             elif self.step6:
@@ -349,65 +343,8 @@ class Main:
         # Run selection for larger groups
         if self.custom_number:
             self.amount = self._check_custom_number_selection(mouse_pos)
-
-    @staticmethod
-    def _move_files_to_dir():
-        """Move the files made into their respective directory"""
-        current_dir = os.getcwd()
-        dest1 = os.path.join(current_dir, "ticket_images")
-        dest2 = os.path.join(current_dir, "checkout_doc")
-        dest3 = os.path.join(current_dir, "parking_ticket_images")
-        dest4 = os.path.join(current_dir, "receipts")
-
-        files = os.listdir()
-        for f in files:
-            if f.startswith("ticket"):
-                shutil.move(f, dest1)
-            if f.startswith("checkout"):
-                shutil.move(f, dest2)
-            if f.startswith("parking"):
-                shutil.move(f, dest3)
-            if f.startswith("receipt"):
-                shutil.move(f, dest4)
-
-    def _generate_tickets(self):
-        """Making the tickets and printing them on a Word document"""
-        for _ in range(self.stats.age1):
-            Ticket("Age 0-3", self.settings.babies, self.stats.ticket_id)
-            self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
-            self.stats.ticket_id += 1
-        for _ in range(self.stats.age2):
-            Ticket("Age 4-18", self.settings.kids, self.stats.ticket_id)
-            self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
-            self.stats.ticket_id += 1
-        for _ in range(self.stats.age3):
-            Ticket("Age 19-64", self.settings.adults, self.stats.ticket_id)
-            self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
-            self.stats.ticket_id += 1
-        for _ in range(self.stats.age4):
-            Ticket("Age 65+", self.settings.elderly, self.stats.ticket_id)
-            self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
-            self.stats.ticket_id += 1
-
-        self.doc.print_doc(self.stats.ticket_id, "ticket")
-
-        path = Path('id_tickets.json')
-        txt = json.dumps(self.stats.ticket_id)
-        path.write_text(txt)
-
-    def _generate_parking_tickets(self):
-        """Making the parking tickets and printing them on a Word document"""
-        for _ in range(self.stats.parking_tickets):
-            Ticket("Parking ticket", self.settings.parking_ticket, self.stats.parking_ticket_id)
-            self.doc.add_ticket(f"parking_ticket{self.stats.parking_ticket_id}.png")
-            self.stats.parking_ticket_id += 1
-
-        self.doc.print_doc(self.stats.parking_ticket_id, "parking_ticket")
-
-        # Save the ticket ID so each guest gets unique ID's
-        path = Path('id_parking_tickets.json')
-        txt = json.dumps(self.stats.parking_ticket_id)
-        path.write_text(txt)
+            if not self.custom_number:
+                self._next_step()
 
     def _custom_number_selection(self, mouse_pos):
         """Make a menu for selecting a custom amount"""
@@ -481,9 +418,7 @@ class Main:
             try:
                 number = int(self.amount_txt)
                 if number:
-                    if self.custom_number:
-                        self.custom_number = False
-                        self._next_step()
+                    self.custom_number = False
                     self.parking_ticket_selection = False
                     return number
             except ValueError:
@@ -516,6 +451,7 @@ class Main:
             except IndexError:
                 pass
             self.amount -= self.multiselect
+            print(self.stats.total_people)
 
             if len(self.person) < 5:
                 self.multiselect = 1
@@ -552,17 +488,12 @@ class Main:
             self.step6 = True
 
         elif self.step6:
-            self.receipt.make_receipt()
+            self.generator.generate_receipt()
 
             if self.print_receipt:
-                os.startfile(f"receipt{self.stats.receipt_id}.docx")
+                os.startfile(f"receipt{self.stats.receipt_id - 1}.docx")
 
-            self.stats.receipt_id += 1
-            path = Path('id_receipts.json')
-            txt = json.dumps(self.stats.receipt_id)
-            path.write_text(txt)
-
-            self._move_files_to_dir()
+            move_files_to_dir()
             self.step6 = False
             self.step7 = True
 

@@ -15,3 +15,7 @@ for d in dirs:
         f = os.path.join(d, file)
         os.remove(f)
 
+files_dir = os.listdir()
+for file in files_dir:
+    if file.endswith(".json"):
+        os.remove(file)
