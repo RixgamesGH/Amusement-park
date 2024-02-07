@@ -113,11 +113,16 @@ class Ticket:
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=4,
+            box_size=3,
             border=2,
         )
 
-        qr.add_data('https://www.youtube.com/watch?v=dQw4w9WgXcQ')  # Replace with your URL or data
+        qr_data = f"Ticket type: {ticket_type}\n"
+        qr_data += f"Price ticket {price}\n"
+        qr_data += f"Creation date: {date}\n"
+        qr_data += f"Ticket ID: {ticket_id}"
+
+        qr.add_data(qr_data)  # Replace with your URL or data
         qr.make(fit=True)
         qr_img = qr.make_image(fill_color=(240, 159, 31), back_color=self.background_color)
         self.ticket.paste(qr_img, (36, 138))
@@ -126,9 +131,3 @@ class Ticket:
             self.ticket.save(f"parking_ticket{ticket_id}.png")
         else:
             self.ticket.save(f"ticket{ticket_id}.png")
-
-
-# Some code, so I can run a test outside the main loop to see how the ticket will look
-if __name__ == "__main__":
-    run = Ticket("test", 5, "_example")
-    run.ticket.show()

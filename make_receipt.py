@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from jinja2 import Template
 from docx import Document
 from docx.shared import Pt
@@ -15,16 +17,7 @@ class Receipt:
 Total:                                               €{{ '%0.2f' % total|round(2) }}
         """
 
-
     def _generate_receipt_template(self, items):
-        template_str = """
-{%- for item, price in items.items() %}
-{{ item }}:
-                                                          €{{ '%0.2f' % price|round(2) }}
-{% endfor %}
----------------------------------------------------
-Total:                                               €{{ '%0.2f' % total|round(2) }}
-"""
 
         template = Template(self.template_str)
 
@@ -35,6 +28,9 @@ Total:                                               €{{ '%0.2f' % total|round
     def save_receipt_to_docx(self, receipt_id, items):
         doc = Document()
         receipt_text = self._generate_receipt_template(items)
+
+        today = datetime.now()
+        date = today.strftime("%B %d, %Y %H:%M")
 
         # Set page size
         section = doc.sections[0]
@@ -51,7 +47,7 @@ Total:                                               €{{ '%0.2f' % total|round
 
         # Add receipt content
         text = doc.add_paragraph()
-        text.add_run(f"ID{str(receipt_id)}\n").font.size = Pt(6)
+        text.add_run(f"Date: {date}\tID: {str(receipt_id)}\n").font.size = Pt(6)
         text.add_run(receipt_text).font.size = Pt(10)
         text.paragraph_format.line_spacing = Pt(10)
 

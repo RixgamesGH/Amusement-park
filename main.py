@@ -1,3 +1,5 @@
+import os.path
+
 import pygame
 from settings import Settings
 from button import Button
@@ -86,6 +88,9 @@ class Main:
         while True:
             self._check_events()
             self._update_screen()
+            if self.step7:
+                pygame.time.wait(8000)
+                self._next_step()
             self.clock.tick(60)
 
     def _check_events(self):
@@ -119,9 +124,9 @@ class Main:
     def _hover_text(self, button, mouse_pos):
         """Make it so when you hover over the button the text color changes"""
         if button.rect.collidepoint(mouse_pos):
-            button.text_color = (255, 0, 0)
+            button.button_txt_color = (128, 128, 128)
         else:
-            button.text_color = self.settings.text_color
+            button.button_txt_color = self.settings.button_txt_color
 
     def _draw_buttons_and_text(self):
         """Draw button selection and text on screen"""
@@ -223,8 +228,11 @@ class Main:
                 self.B_two.draw_button("Yes")
                 self.B_four.draw_button("No")
 
-                # Draw the text for this step.
+                # Draw the text for this ste
                 self.txt.text("Would you like to get the receipt?")
+
+            elif self.step7:
+                self.txt.text("Thanks for your purchase, have fun!")
 
         if self.custom_number:
             self._custom_number_selection(mouse_pos)
@@ -286,19 +294,17 @@ class Main:
 
                 if click_multiselect:
                     if self.multiselect == 1 and len(self.person) >= 5:
-                        self.B_multiselect.button_color = (200, 200, 200)
+                        self.B_multiselect.button_color = (21, 131, 186)
                         self.multiselect = 5
                     elif self.multiselect == 5 and len(self.person) >= 10:
-                        self.B_multiselect.button_color = (152, 152, 152)
+                        self.B_multiselect.button_color = (14, 87, 124)
                         self.multiselect = 10
                     elif self.multiselect == 10 and len(self.person) >= 50:
-                        self.B_multiselect.button_color = (96, 96, 96)
+                        self.B_multiselect.button_color = (7, 43, 62)
                         self.multiselect = 50
-                    elif self.multiselect == 50:
+                    else:
                         self.B_multiselect.button_color = self.settings.button_color
                         self.multiselect = 1
-                    else:
-                        pass
 
             elif self.step3:
                 # Select whether the made selection is correct or not.
@@ -329,7 +335,8 @@ class Main:
                     self.step5 = False
                 if click_four:
                     self.generator.generate_tickets()
-                    self.generator.generate_parking_tickets()
+                    if self.stats.parking_tickets:
+                        self.generator.generate_parking_tickets()
                     self._next_step()
 
             elif self.step6:
@@ -451,14 +458,16 @@ class Main:
             except IndexError:
                 pass
             self.amount -= self.multiselect
-            print(self.stats.total_people)
 
-            if len(self.person) < 5:
-                self.multiselect = 1
-            elif len(self.person) < 10:
-                self.multiselect = 5
-            elif len(self.person) < 50:
+            if len(self.person) < 50 and self.multiselect == 50:
+                self.B_multiselect.button_color = (14, 87, 124)
                 self.multiselect = 10
+            if len(self.person) < 10 and self.multiselect == 10:
+                self.B_multiselect.button_color = (21, 131, 186)
+                self.multiselect = 5
+            if len(self.person) < 5:
+                self.B_multiselect.button_color = self.settings.button_color
+                self.multiselect = 1
 
             if self.amount == 0:
                 if self.stats.total_people >= self.settings.minimum_groupsize_discount:
@@ -489,13 +498,19 @@ class Main:
 
         elif self.step6:
             self.generator.generate_receipt()
+            move_files_to_dir()
 
             if self.print_receipt:
-                os.startfile(f"receipt{self.stats.receipt_id - 1}.docx")
+                file_path = os.path.join(os.getcwd(), "receipts")
+                file = os.path.join(file_path, f"receipt{self.stats.receipt_id - 1}.docx")
+                os.startfile(file)
 
-            move_files_to_dir()
             self.step6 = False
             self.step7 = True
+
+        elif self.step7:
+            self.step7 = False
+            self.step1 = True
 
     def _update_screen(self):
         """This will draw the objects on the screen"""

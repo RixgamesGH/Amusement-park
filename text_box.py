@@ -10,8 +10,8 @@ class TextBox:
         self.settings = ap.settings
 
         self.width, self.height = width, height
-        self.textbox_color = self.settings.textbox_color
-        self.text_color = self.settings.text_color
+        self.textbox_color = self.settings.button_color
+        self.text_color = self.settings.button_txt_color
         self.font = pygame.font.SysFont(None, 52)
 
         self.rect = pygame.Rect(0, 0, self.width, self.height)

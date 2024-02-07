@@ -1,10 +1,10 @@
 class Settings:
 
     def __init__(self):
-        self.bg_color = (0, 0, 0)
-        self.button_color = (255, 255, 255)
-        self.text_color = (0, 0, 255)
-        self.textbox_color = (255, 255, 255)
+        self.bg_color = (3, 16, 45)
+        self.button_color = (46, 169, 231)
+        self.button_txt_color = (0, 0, 0)
+        self.text_color = (19, 194, 148)
         self.N_width = 125
         self.N_height = 120
 

@@ -14,7 +14,7 @@ class Button(pygame.sprite.Sprite):
 
         self.width, self.height = width, height
         self.button_color = self.settings.button_color
-        self.text_color = self.settings.text_color
+        self.button_txt_color = self.settings.button_txt_color
         self.font = pygame.font.SysFont(None, 40)
 
         self.rect = pygame.Rect(0, 0, self.width, self.height)
@@ -25,7 +25,7 @@ class Button(pygame.sprite.Sprite):
         self.rect.x = self.rect.x - x
 
     def _prep_msg(self, msg):
-        self.msg_image = self.font.render(msg, True, self.text_color, self.button_color)
+        self.msg_image = self.font.render(msg, True, self.button_txt_color, self.button_color)
         self.msg_image_rect = self.msg_image.get_rect()
         self.msg_image_rect.center = self.rect.center
 
