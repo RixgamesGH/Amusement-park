@@ -8,12 +8,12 @@ from txt_display import TextDisplay
 from price_stats import PriceStats
 from generator import Generator
 from backend import *
+from msg import Msg
 import sys
 
 
 class Main:
     """Overall class to manage assets and behaviour"""
-
     def __init__(self):
         """Initialize program and create resources"""
         pygame.init()
@@ -33,35 +33,37 @@ class Main:
         self.B_three = Button(self, 0, -250)
         self.B_four = Button(self, -275, -250)
         self.B_five = Button(self, -550, -250)
-        self.B_multiselect = Button(self, -0, -150)
+        self.B_multiselect = Button(self, -0, -150, width=333)
+        self.B_corner = Button(self, 750, 450)
 
         # Define the (number) buttons for custom amount selection
-        self.N_1 = Button(self, 150, 150,
+        self.N_1 = Button(self, 185, 185,
                           width=self.settings.N_width, height=self.settings.N_height)
-        self.N_2 = Button(self, 0, 150,
+        self.N_2 = Button(self, 0, 185,
                           width=self.settings.N_width, height=self.settings.N_height)
-        self.N_3 = Button(self, -150, 150,
+        self.N_3 = Button(self, -185, 185,
                           width=self.settings.N_width, height=self.settings.N_height)
-        self.N_4 = Button(self, 150, 0,
+        self.N_4 = Button(self, 185, 0,
                           width=self.settings.N_width, height=self.settings.N_height)
         self.N_5 = Button(self, 0, 0,
                           width=self.settings.N_width, height=self.settings.N_height)
-        self.N_6 = Button(self, -150, 0,
+        self.N_6 = Button(self, -185, 0,
                           width=self.settings.N_width, height=self.settings.N_height)
-        self.N_7 = Button(self, 150, -150,
+        self.N_7 = Button(self, 185, -185,
                           width=self.settings.N_width, height=self.settings.N_height)
-        self.N_8 = Button(self, 0, -150,
+        self.N_8 = Button(self, 0, -185,
                           width=self.settings.N_width, height=self.settings.N_height)
-        self.N_9 = Button(self, -150, -150,
+        self.N_9 = Button(self, -185, -185,
                           width=self.settings.N_width, height=self.settings.N_height)
-        self.N_0 = Button(self, 0, -300,
+        self.N_0 = Button(self, 0, -370,
                           width=self.settings.N_width, height=self.settings.N_height)
-        self.N_enter = Button(self, -150, -300,
+        self.N_enter = Button(self, -185, -370,
                               width=self.settings.N_width, height=self.settings.N_height)
-        self.N_cancel = Button(self, 150, -300,
+        self.N_cancel = Button(self, 185, -370,
                                width=self.settings.N_width, height=self.settings.N_height)
 
         # Initialize the text box resources
+        self.msg = Msg("en")
         self.text_box = TextBox(self)
         self.amount_txt = ''
 
@@ -70,9 +72,17 @@ class Main:
         self.txt = TextDisplay(self)
         self.generator = Generator(self)
 
+        # Assets for checking pin for staff access
+        self.staff = False
+        self.pin_check = False
+        self.wrong_pin = False
+        self.cashier = False
+
         # Define the steps and set step 1 on active, rest inactive
-        self.step1 = True
+        self.step0 = True
+        self.step1 = False
         self.custom_number = False
+        self.cancel = False
         self.step2 = False
         self.step3 = False
         self.step4 = False
@@ -88,8 +98,11 @@ class Main:
         while True:
             self._check_events()
             self._update_screen()
+            if self.wrong_pin:
+                pygame.time.wait(2000)
+                self._next_step()
             if self.step7:
-                pygame.time.wait(8000)
+                pygame.time.wait(5000)
                 self._next_step()
             self.clock.tick(60)
 
@@ -141,25 +154,43 @@ class Main:
             self._hover_text(self.B_four, mouse_pos)
             self._hover_text(self.B_five, mouse_pos)
             self._hover_text(self.B_multiselect, mouse_pos)
+            self._hover_text(self.B_corner, mouse_pos)
 
-            if self.step1:
+            if self.step0:
+                # Draw buttons for language selection
+                self.B_one.draw_button("Nederlands")
+                self.B_three.draw_button("English")
+                self.B_four.draw_button("French")
+                self.B_five.draw_button("Deutsch")
+                self.B_corner.draw_button("Staff only")
+
+            elif self.staff:
+                self.B_two.draw_button("Close app")
+                self.B_four.draw_button("Cashier interphase")
+
+            elif self.wrong_pin:
+                self.txt.text("That's the wrong PIN")
+
+            elif self.step1:
                 # Draw buttons for first selection screen
-                self.B_one.draw_button("One")
-                self.B_two.draw_button("Two")
-                self.B_three.draw_button("Three")
-                self.B_four.draw_button("Four")
-                self.B_five.draw_button("Five or more")
+                self.B_one.draw_button(self.msg.one)
+                self.B_two.draw_button(self.msg.two)
+                self.B_three.draw_button(self.msg.three)
+                self.B_four.draw_button(self.msg.four)
+                self.B_five.draw_button(self.msg.five)
+                self.B_corner.draw_button(self.msg.return_page)
 
                 # Draw the question on the screen.
-                self.txt.text("With how many people do you want to enter the park?")
+                self.txt.text(self.msg.string1)
 
             elif self.step2:
                 # Draw buttons for second selection screen
-                self.B_one.draw_button("0-3 years old")
-                self.B_two.draw_button("4-18 years old")
-                self.B_four.draw_button("19-64 years old")
-                self.B_five.draw_button("65+ years old")
-                self.B_multiselect.draw_button(f"Multiselect {self.multiselect}x")
+                self.B_one.draw_button(self.msg.age1)
+                self.B_two.draw_button(self.msg.age2)
+                self.B_four.draw_button(self.msg.age3)
+                self.B_five.draw_button(self.msg.age4)
+                self.B_multiselect.draw_button(self.msg.multi.format(x=self.multiselect))
+                self.B_corner.draw_button(self.msg.return_page)
 
                 # Draw the question on the screen.
                 if self.first_person:
@@ -170,7 +201,7 @@ class Main:
                         amount -= 1
                     self.first_person = False
 
-                self.txt.text(f"Click multiselect to add more people to an age group at once ({len(self.person)} left)")
+                self.txt.text(self.msg.string2.format(x=len(self.person)))
 
                 # Draw the total price at the bottom of the screen
                 self.txt.show_price()
@@ -183,33 +214,32 @@ class Main:
 
             elif self.step3:
                 # Draw buttons for third selection screen.
-                self.B_two.draw_button("Yes")
-                self.B_four.draw_button("No")
+                self.B_two.draw_button(self.msg.yes)
+                self.B_four.draw_button(self.msg.no)
 
                 # Draw the question on the screen.
-                self.txt.text(f"0-3 years old: {self.stats.age1} in total", y=300)
-                self.txt.text(f"4-18 years old: {self.stats.age2} in total", y=240)
-                self.txt.text(f"19-64 years old: {self.stats.age3} in total", y=180)
-                self.txt.text(f"65+ years old: {self.stats.age4} in total", y=120)
+                self.txt.text(self.msg.total1.format(x=self.stats.age1), y=300)
+                self.txt.text(self.msg.total2.format(x=self.stats.age2), y=240)
+                self.txt.text(self.msg.total3.format(x=self.stats.age3), y=180)
+                self.txt.text(self.msg.total4.format(x=self.stats.age4), y=120)
                 if self.stats.total_people >= 5:
-                    discount = "Yes"
+                    discount = self.msg.yes
                 else:
-                    discount = "No"
-                self.txt.text(f"Group discount? {discount}", y=60)
-                self.txt.text(f"Is this correct?", y=-60)
+                    discount = self.msg.no
+                self.txt.text(self.msg.discount.format(x=discount), y=60)
+                self.txt.text(self.msg.string3, y=-60)
 
                 self.txt.show_price()
 
             elif self.step4 and not self.parking_ticket_selection:
                 # Draw buttons for fourth selection screen.
-                self.B_two.draw_button("Yes")
-                self.B_three.draw_button("Yes, multiple")
-                self.B_four.draw_button("No")
+                self.B_two.draw_button(self.msg.yes)
+                self.B_three.draw_button(self.msg.multiple)
+                self.B_four.draw_button(self.msg.no)
+                self.B_corner.draw_button(self.msg.return_page)
 
                 # Draw the question on the screen.
-                self.txt.text(f"Would you like to buy a parking ticket as well for €"
-                              f"{self.settings.parking_ticket:.2f}?")
-
+                self.txt.text(self.msg.string4.format(x=self.settings.parking_ticket))
                 self.txt.show_price()
 
             elif self.step4 and self.parking_ticket_selection:
@@ -217,22 +247,22 @@ class Main:
 
             elif self.step5:
                 # Draw buttons for fifth selection
-                self.B_two.draw_button("Cancel")
-                self.B_four.draw_button("Pay")
+                self.B_two.draw_button(self.msg.cancel)
+                self.B_four.draw_button(self.msg.pay)
 
                 # Draw the text for this step.
-                self.txt.text(f"Your total will come out to be €{self.stats.price_total:.2f}")
+                self.txt.text(self.msg.string5.format(x=self.stats.price_total))
 
             elif self.step6:
                 # Draw buttons for sixth screen
-                self.B_two.draw_button("Yes")
-                self.B_four.draw_button("No")
+                self.B_two.draw_button(self.msg.yes)
+                self.B_four.draw_button(self.msg.no)
 
                 # Draw the text for this ste
-                self.txt.text("Would you like to get the receipt?")
+                self.txt.text(self.msg.string6)
 
             elif self.step7:
-                self.txt.text("Thanks for your purchase, have fun!")
+                self.txt.text(self.msg.string7)
 
         if self.custom_number:
             self._custom_number_selection(mouse_pos)
@@ -247,9 +277,36 @@ class Main:
         click_four = self.B_four.rect.collidepoint(mouse_pos)
         click_five = self.B_five.rect.collidepoint(mouse_pos)
         click_multiselect = self.B_multiselect.rect.collidepoint(mouse_pos)
+        click_corner = self.B_corner.rect.collidepoint(mouse_pos)
 
         if not self.custom_number:
-            if self.step1:
+            if self.step0:
+                if click_one:
+                    self.msg = Msg("nl")
+                    self._next_step()
+                if click_three:
+                    self.msg = Msg("en")
+                    self._next_step()
+                if click_five:
+                    self.msg = Msg("de")
+                    self._next_step()
+                if click_four:
+                    self.msg = Msg("fr")
+                    self._next_step()
+                if click_corner:
+                    self.pin_check = True
+                    self.custom_number = True
+
+            elif self.staff:
+                if click_two:
+                    pygame.quit()
+                    sys.exit()
+                elif click_four:
+                    self.cashier = True
+                    self.staff = False
+                    self.step1 = True
+
+            elif self.step1:
                 # Go to next page and assign the amount of people
                 if click_one:
                     self.amount = 1
@@ -269,6 +326,10 @@ class Main:
 
                 if click_five:
                     self.custom_number = True
+
+                if click_corner:
+                    self.step1 = False
+                    self.step0 = True
 
             elif self.step2:
                 # Select the age per person and get the price
@@ -292,6 +353,10 @@ class Main:
                     self.stats.price_total += self.settings.elderly * self.multiselect
                     self._next_step()
 
+                if click_corner:
+                    self.step2 = False
+                    self.step1 = True
+
                 if click_multiselect:
                     if self.multiselect == 1 and len(self.person) >= 5:
                         self.B_multiselect.button_color = (21, 131, 186)
@@ -311,7 +376,6 @@ class Main:
                 if click_two:
                     self._next_step()
                 if click_four:
-                    self.amount_txt = ""
                     self.step1 = True
                     self.step3 = False
 
@@ -327,6 +391,9 @@ class Main:
                     self._next_step()
                 elif click_four:
                     self._next_step()
+                elif click_corner:
+                    self.step3 = True
+                    self.step4 = False
 
             elif self.step5:
                 # Clicking on cancel will reset the program and start you at the front
@@ -349,8 +416,11 @@ class Main:
 
         # Run selection for larger groups
         if self.custom_number:
-            self.amount = self._check_custom_number_selection(mouse_pos)
-            if not self.custom_number:
+            if self.step0:
+                self.staff_pin = self._check_custom_number_selection(mouse_pos)
+            if self.step1:
+                self.amount = self._check_custom_number_selection(mouse_pos)
+            if not self.custom_number and not self.cancel:
                 self._next_step()
 
     def _custom_number_selection(self, mouse_pos):
@@ -366,11 +436,11 @@ class Main:
         self.N_8.draw_button("8")
         self.N_9.draw_button("9")
         self.N_0.draw_button("0")
-        self.N_enter.draw_button("enter")
+        self.N_enter.draw_button(self.msg.enter)
         if not self.amount_txt:
-            self.N_cancel.draw_button("cancel")
+            self.N_cancel.draw_button(self.msg.cancel)
         else:
-            self.N_cancel.draw_button("remove")
+            self.N_cancel.draw_button(self.msg.remove)
 
         # Make the text color change when you hover over a button
         self._hover_text(self.N_1, mouse_pos)
@@ -424,9 +494,11 @@ class Main:
         if click_enter:
             try:
                 number = int(self.amount_txt)
+                self.amount_txt = ""
                 if number:
                     self.custom_number = False
                     self.parking_ticket_selection = False
+                    self.cancel = False
                     return number
             except ValueError:
                 pass
@@ -435,7 +507,7 @@ class Main:
                 self.amount_txt = ""
                 if self.custom_number:
                     self.custom_number = False
-                    self.step1 = True
+                    self.cancel = True
                 if self.parking_ticket_selection:
                     self.parking_ticket_selection = False
                     self.step4 = True
@@ -443,7 +515,22 @@ class Main:
                 self.amount_txt = self.amount_txt[:-1]
 
     def _next_step(self):
-        if self.step1:
+        if self.step0:
+            self.step0 = False
+            if self.pin_check:
+                if self.staff_pin == 1342037:
+                    self.staff = True
+                else:
+                    self.wrong_pin = True
+                self.pin_check = False
+            else:
+                self.step1 = True
+
+        elif self.wrong_pin:
+            self.wrong_pin = False
+            self.step0 = True
+
+        elif self.step1:
             self.stats.reset_stats()
             self.txt.prep_price_total()
             self.stats.total_people = self.amount
@@ -483,7 +570,6 @@ class Main:
             self.txt.prep_price_total()
 
         elif self.step3:
-            self.amount_txt = ""
             self.step3 = False
             self.step4 = True
 
@@ -506,11 +592,14 @@ class Main:
                 os.startfile(file)
 
             self.step6 = False
-            self.step7 = True
+            if self.cashier:
+                self.step1 = True
+            else:
+                self.step7 = True
 
         elif self.step7:
             self.step7 = False
-            self.step1 = True
+            self.step0 = True
 
     def _update_screen(self):
         """This will draw the objects on the screen"""

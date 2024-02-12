@@ -4,23 +4,24 @@ import pygame.font
 class TextDisplay:
     """Class displaying the needed text columns (questions, price, etc.)"""
 
-    def __init__(self, ap):
+    def __init__(self, main):
         """Initialize assets"""
-        self.screen = ap.screen
+        self.screen = main.screen
         self.screen_rect = self.screen.get_rect()
-        self.settings = ap.settings
-        self.stats = ap.stats
+        self.settings = main.settings
+        self.stats = main.stats
+        self.msg = main.msg
 
         # Font settings
         self.text_color = self.settings.text_color
-        self.font = pygame.font.SysFont(None, 52)
+        self.font = pygame.font.SysFont(None, 48)
 
         self.prep_price_total()
 
     def prep_price_total(self):
         """Turn the total price in a rendered image"""
         rounded_price = float(round(self.stats.price_total, 2))
-        price_str = f"Price total: €{rounded_price:.2f}"
+        price_str = self.msg.price_count.format(x=rounded_price)
         self.price_image = self.font.render(price_str, True,
                                             self.text_color, self.settings.bg_color)
 

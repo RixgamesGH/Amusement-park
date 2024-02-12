@@ -3,7 +3,7 @@ import pygame
 
 class TextBox:
     """Text box for inputting numbers for amount of people"""
-    def __init__(self, ap, width=425, height=125):
+    def __init__(self, ap, width=475, height=150):
         """Initialize assets for the text box"""
         self.screen = ap.screen
         self.screen_rect = self.screen.get_rect()
@@ -17,7 +17,7 @@ class TextBox:
         self.rect = pygame.Rect(0, 0, self.width, self.height)
         self.rect.center = self.screen_rect.center
 
-        self.rect.y = self.rect.y - 325
+        self.rect.y = self.rect.y - 360
 
     def _prep_msg(self, msg):
         self.msg_image = self.font.render(msg, True, self.text_color, self.textbox_color)

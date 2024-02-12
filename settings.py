@@ -5,8 +5,8 @@ class Settings:
         self.button_color = (46, 169, 231)
         self.button_txt_color = (0, 0, 0)
         self.text_color = (19, 194, 148)
-        self.N_width = 125
-        self.N_height = 120
+        self.N_width = 160
+        self.N_height = 150
 
         # Pricing of tickets
         self.babies = 0

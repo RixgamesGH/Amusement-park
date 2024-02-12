@@ -4,7 +4,7 @@ import pygame
 class Button(pygame.sprite.Sprite):
     """Template for the buttons used in the program"""
 
-    def __init__(self, main, x, y, width=250, height=80):
+    def __init__(self, main, x, y, width=260, height=80):
         """Initialize the assets of the button"""
         super().__init__()
 
