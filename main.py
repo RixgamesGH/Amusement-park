@@ -159,7 +159,7 @@ class Main:
             if self.step0:
                 # Draw buttons for language selection
                 self.B_one.draw_button("Nederlands")
-                self.B_three.draw_button("English")
+                self.B_two.draw_button("English")
                 self.B_four.draw_button("French")
                 self.B_five.draw_button("Deutsch")
                 self.B_corner.draw_button("Staff only")
@@ -284,7 +284,7 @@ class Main:
                 if click_one:
                     self.msg = Msg("nl")
                     self._next_step()
-                if click_three:
+                if click_two:
                     self.msg = Msg("en")
                     self._next_step()
                 if click_five:
