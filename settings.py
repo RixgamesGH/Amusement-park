@@ -1,6 +1,8 @@
 class Settings:
 
     def __init__(self):
+        self.park_name = "Amusement Park"
+
         self.bg_color = (3, 16, 45)
         self.button_color = (46, 169, 231)
         self.button_txt_color = (0, 0, 0)

@@ -11,25 +11,25 @@ class Generator:
         self.settings = main.settings
         self.stats = main.stats
         self.doc = PrintDoc()
-        self.receipt = Receipt()
+        self.receipt = Receipt(self.settings.park_name)
         self.items = {}
 
     def generate_tickets(self):
         """Making the tickets and printing them on a Word document"""
         for _ in range(self.stats.age1):
-            Ticket("Age 0-3", self.settings.babies, self.stats.ticket_id)
+            Ticket("Age 0-3", self.settings.babies, self.stats.ticket_id, self.settings.park_name)
             self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
             self.stats.ticket_id += 1
         for _ in range(self.stats.age2):
-            Ticket("Age 4-18", self.settings.kids, self.stats.ticket_id)
+            Ticket("Age 4-18", self.settings.kids, self.stats.ticket_id, self.settings.park_name)
             self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
             self.stats.ticket_id += 1
         for _ in range(self.stats.age3):
-            Ticket("Age 19-64", self.settings.adults, self.stats.ticket_id)
+            Ticket("Age 19-64", self.settings.adults, self.stats.ticket_id, self.settings.park_name)
             self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
             self.stats.ticket_id += 1
         for _ in range(self.stats.age4):
-            Ticket("Age 65+", self.settings.elderly, self.stats.ticket_id)
+            Ticket("Age 65+", self.settings.elderly, self.stats.ticket_id, self.settings.park_name)
             self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
             self.stats.ticket_id += 1
 

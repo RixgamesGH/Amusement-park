@@ -5,7 +5,7 @@ from datetime import datetime
 
 class Ticket:
 
-    def __init__(self, ticket_type, price, ticket_id):
+    def __init__(self, ticket_type, price, ticket_id, park_name):
         """Initialize the assets to make a ticket"""
 
         self.background_color = (31, 38, 51, 255)
@@ -95,7 +95,7 @@ class Ticket:
         date = today.strftime("%B %d, %Y %H:%M")
 
         # Draw text on the ticket
-        self.draw.text((150, 44), "Amusement park", fill=self.text_color,
+        self.draw.text((150, 44), f"{park_name}", fill=self.text_color,
                        font=self.title_font, stroke_width=1, stroke_fill=self.text_stroke)
         self.draw.text((336, 84), f"{ticket_type}", fill=self.text_color,
                        font=self.title_font, stroke_width=1, stroke_fill=self.text_stroke)

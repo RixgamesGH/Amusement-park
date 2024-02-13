@@ -7,7 +7,8 @@ from docx.shared import Pt
 
 class Receipt:
 
-    def __init__(self):
+    def __init__(self, park_name):
+        self.park_name = park_name
         self.template_str = """
 {%- for item, price in items.items() %}
 {{ item }}:
@@ -43,7 +44,7 @@ Total:                                               €{{ '%0.2f' % total|round
         section.top_margin = Pt(14.4)
         section.bottom_margin = Pt(0)
 
-        doc.add_heading("Receipt Amusement Park", 2)
+        doc.add_heading(f"Receipt {self.park_name}", 2)
 
         # Add receipt content
         text = doc.add_paragraph()
