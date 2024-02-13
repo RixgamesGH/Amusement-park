@@ -160,7 +160,7 @@ class Main:
                 # Draw buttons for language selection
                 self.B_one.draw_button("Nederlands")
                 self.B_two.draw_button("English")
-                self.B_four.draw_button("French")
+                self.B_four.draw_button("Français")
                 self.B_five.draw_button("Deutsch")
                 self.B_corner.draw_button("Staff only")
 
