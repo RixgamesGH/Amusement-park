@@ -3,6 +3,13 @@ class Settings:
     def __init__(self):
         self.park_name = "Amusement Park"
 
+        # Attributes to for screen scaling
+        self.screen_width = 1920
+        self.screen_height = 1080
+        # Make ratio for width and height so all objects can be drawn on the screen, no matter the screensize
+        self.r_width = self.screen_width / 1920
+        self.r_height = self.screen_height / 1080
+
         self.bg_color = (3, 16, 45)
         self.button_color = (46, 169, 231)
         self.button_txt_color = (0, 0, 0)

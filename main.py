@@ -24,8 +24,8 @@ class Main:
 
         # Making the program run on full-screen.
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        self.screen_width = self.screen.get_width()
-        self.screen_height = self.screen.get_height()
+        self.settings.screen_width = self.screen.get_width()
+        self.settings.screen_height = self.screen.get_height()
 
         # Define buttons and their positions
         self.B_one = Button(self, 550, -250)
@@ -62,14 +62,14 @@ class Main:
         self.N_cancel = Button(self, 185, -370,
                                width=self.settings.N_width, height=self.settings.N_height)
 
-        # Initialize the text box resources
+        # Initialize the text display resources
         self.msg = Msg("en")
         self.text_box = TextBox(self)
         self.amount_txt = ''
+        self.txt = TextDisplay(self)
 
         # Initialize assets
         self.stats = PriceStats(self)
-        self.txt = TextDisplay(self)
         self.generator = Generator(self)
 
         # Assets for checking pin for staff access

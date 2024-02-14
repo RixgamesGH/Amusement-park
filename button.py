@@ -12,17 +12,17 @@ class Button(pygame.sprite.Sprite):
         self.screen_rect = self.screen.get_rect()
         self.settings = main.settings
 
-        self.width, self.height = width, height
+        self.width, self.height = width * self.settings.r_width, height * self.settings.r_height
         self.button_color = self.settings.button_color
         self.button_txt_color = self.settings.button_txt_color
-        self.font = pygame.font.SysFont(None, 40)
+        self.font = pygame.font.SysFont(None, 40 * self.settings.r_height)
 
         self.rect = pygame.Rect(0, 0, self.width, self.height)
         self.rect.center = self.screen_rect.center
 
         # Use the x and y values to offset the button from the center
-        self.rect.y = self.rect.y - y
-        self.rect.x = self.rect.x - x
+        self.rect.y = self.rect.y - y * self.settings.r_height
+        self.rect.x = self.rect.x - x * self.settings.r_width
 
     def _prep_msg(self, msg):
         self.msg_image = self.font.render(msg, True, self.button_txt_color, self.button_color)

@@ -14,7 +14,7 @@ class TextDisplay:
 
         # Font settings
         self.text_color = self.settings.text_color
-        self.font = pygame.font.SysFont(None, 48)
+        self.font = pygame.font.SysFont(None, 48 * self.settings.r_height)
 
         self.prep_price_total()
 
@@ -42,7 +42,7 @@ class TextDisplay:
         # Display the text on the screen
         self.text_rect = self.text_image.get_rect()
         self.text_rect.center = self.screen_rect.center
-        self.text_rect.y -= y
-        self.text_rect.x -= x
+        self.text_rect.y -= y * self.settings.r_height
+        self.text_rect.x -= x * self.settings.r_width
 
         self.screen.blit(self.text_image, self.text_rect)

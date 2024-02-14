@@ -9,15 +9,15 @@ class TextBox:
         self.screen_rect = self.screen.get_rect()
         self.settings = ap.settings
 
-        self.width, self.height = width, height
+        self.width, self.height = width * self.settings.r_width, height * self.settings.r_height
         self.textbox_color = self.settings.button_color
         self.text_color = self.settings.button_txt_color
-        self.font = pygame.font.SysFont(None, 52)
+        self.font = pygame.font.SysFont(None, 52 * self.settings.r_height)
 
         self.rect = pygame.Rect(0, 0, self.width, self.height)
         self.rect.center = self.screen_rect.center
 
-        self.rect.y = self.rect.y - 360
+        self.rect.y = self.rect.y - 360 * self.settings.r_height
 
     def _prep_msg(self, msg):
         self.msg_image = self.font.render(msg, True, self.text_color, self.textbox_color)
