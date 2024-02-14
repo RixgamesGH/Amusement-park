@@ -42,7 +42,8 @@ class Generator:
     def generate_parking_tickets(self):
         """Making the parking tickets and printing them on a Word document"""
         for _ in range(self.stats.parking_tickets):
-            Ticket("Parking ticket", self.settings.parking_ticket, self.stats.parking_ticket_id)
+            Ticket("Parking ticket", self.settings.parking_ticket,
+                   self.stats.parking_ticket_id, self.settings.park_name)
             self.doc.add_ticket(f"parking_ticket{self.stats.parking_ticket_id}.png")
             self.stats.parking_ticket_id += 1
 
