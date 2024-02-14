@@ -24,10 +24,13 @@ class PrintDoc:
             doc.add_picture(image_path, width=Inches(7.5))  # Adjust the size as needed
 
         # Save the document
-        output_file = f"checkout_{ticket_type}{doc_id - 1}.docx"
-        doc.save(output_file)
+        input_file = f"checkout_{ticket_type}{doc_id - 1}.docx"
+        doc.save(input_file)
         self.image_paths = []
 
         # Convert to pdf
-        convert(output_file)
-        os.remove(output_file)
+        output_file = f"checkout_{ticket_type}{doc_id - 1}.pdf"
+        file = open(output_file, "w")
+        file.close()
+        convert(input_file, output_file)
+        os.remove(input_file)

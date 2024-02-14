@@ -10,6 +10,14 @@ def move_files_to_dir():
     dest3 = os.path.join(current_dir, "parking_ticket_images")
     dest4 = os.path.join(current_dir, "receipts")
 
+    dirs = [dest1, dest2, dest3, dest4]
+
+    for d in dirs:
+        if os.path.isdir(d):
+            pass
+        else:
+            os.mkdir(d)
+
     files = os.listdir()
     for f in files:
         if f.startswith("ticket"):
