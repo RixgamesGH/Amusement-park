@@ -27,6 +27,10 @@ class Main:
         self.settings.screen_width = self.screen.get_width()
         self.settings.screen_height = self.screen.get_height()
 
+        # Initialize assets
+        self.stats = PriceStats(self)
+        self.generator = Generator(self)
+
         # Define buttons and their positions
         self.B_one = Button(self, 550, -250)
         self.B_two = Button(self, 275, -250)
@@ -68,9 +72,6 @@ class Main:
         self.amount_txt = ''
         self.txt = TextDisplay(self)
 
-        # Initialize assets
-        self.stats = PriceStats(self)
-        self.generator = Generator(self)
 
         # Assets for checking pin for staff access
         self.staff = False

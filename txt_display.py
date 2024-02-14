@@ -14,7 +14,7 @@ class TextDisplay:
 
         # Font settings
         self.text_color = self.settings.text_color
-        self.font = pygame.font.SysFont(None, 48 * self.settings.r_height)
+        self.font = pygame.font.SysFont(None, int(48 * self.settings.r_height))
 
         self.prep_price_total()
 

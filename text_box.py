@@ -12,7 +12,7 @@ class TextBox:
         self.width, self.height = width * self.settings.r_width, height * self.settings.r_height
         self.textbox_color = self.settings.button_color
         self.text_color = self.settings.button_txt_color
-        self.font = pygame.font.SysFont(None, 52 * self.settings.r_height)
+        self.font = pygame.font.SysFont(None, int(52 * self.settings.r_height))
 
         self.rect = pygame.Rect(0, 0, self.width, self.height)
         self.rect.center = self.screen_rect.center

@@ -15,7 +15,7 @@ class Button(pygame.sprite.Sprite):
         self.width, self.height = width * self.settings.r_width, height * self.settings.r_height
         self.button_color = self.settings.button_color
         self.button_txt_color = self.settings.button_txt_color
-        self.font = pygame.font.SysFont(None, 40 * self.settings.r_height)
+        self.font = pygame.font.SysFont(None, int(40 * self.settings.r_height))
 
         self.rect = pygame.Rect(0, 0, self.width, self.height)
         self.rect.center = self.screen_rect.center
