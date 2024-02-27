@@ -11,7 +11,7 @@ class Generator:
         self.settings = main.settings
         self.stats = main.stats
         self.doc = PrintDoc()
-        self.receipt = Receipt(self.settings.park_name)
+        self.receipt = Receipt()
         self.items = {}
 
     def generate_tickets(self):
@@ -73,7 +73,7 @@ class Generator:
         if self.stats.total_people >= 5:
             self.items["Group discount"] = float(f"{self.settings.discount * -1}")
 
-        self.receipt.save_receipt_to_docx(self.stats.receipt_id, self.items)
+        self.receipt.save_receipt_to_docx(self.stats.receipt_id, self.items, self.settings.park_name)
 
         self.stats.receipt_id += 1
         path = Path('id_receipts.json')
