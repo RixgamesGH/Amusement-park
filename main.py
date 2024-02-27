@@ -2,6 +2,7 @@ import os.path
 
 import pygame
 from settings import Settings
+from change_settings import ChangeSettings
 from button import Button
 from text_box import TextBox
 from txt_display import TextDisplay
@@ -21,6 +22,7 @@ class Main:
         # Set up a clock we'll use for the loop
         self.clock = pygame.time.Clock()
         self.settings = Settings()
+        self.change_settings = ChangeSettings(self)
 
         # Making the program run on full-screen.
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -71,7 +73,6 @@ class Main:
         self.text_box = TextBox(self)
         self.amount_txt = ''
         self.txt = TextDisplay(self)
-
 
         # Assets for checking pin for staff access
         self.staff = False
@@ -166,7 +167,9 @@ class Main:
                 self.B_corner.draw_button("Staff only")
 
             elif self.staff:
+                self.B_corner.draw_button("Return")
                 self.B_two.draw_button("Close app")
+                self.B_three.draw_button("Settings")
                 self.B_four.draw_button("Cashier interphase")
 
             elif self.wrong_pin:
@@ -207,7 +210,7 @@ class Main:
                 # Draw the total price at the bottom of the screen
                 self.txt.show_price()
 
-                # Show how many of each agegroup you have selected already under the buttons
+                # Show how many of each age group you have selected already under the buttons
                 self.txt.text(f"{self.stats.age1}", 550, -325)
                 self.txt.text(f"{self.stats.age2}", 275, -325)
                 self.txt.text(f"{self.stats.age3}", -275, -325)
@@ -299,10 +302,15 @@ class Main:
                     self.custom_number = True
 
             elif self.staff:
+                if click_corner:
+                    self.step0 = True
+                    self.staff = False
                 if click_two:
                     pygame.quit()
                     sys.exit()
-                elif click_four:
+                if click_three:
+                    self.change_settings.run()
+                if click_four:
                     self.cashier = True
                     self.staff = False
                     self.step1 = True
@@ -519,7 +527,7 @@ class Main:
         if self.step0:
             self.step0 = False
             if self.pin_check:
-                if self.staff_pin == 1342037:
+                if self.staff_pin == self.settings.password:
                     self.staff = True
                 else:
                     self.wrong_pin = True
