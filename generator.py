@@ -8,6 +8,7 @@ import json
 class Generator:
 
     def __init__(self, main):
+        self.printer = main.printer
         self.settings = main.settings
         self.stats = main.stats
         self.doc = PrintDoc()
@@ -33,7 +34,9 @@ class Generator:
             self.doc.add_ticket(f"ticket{self.stats.ticket_id}.png")
             self.stats.ticket_id += 1
 
-        self.doc.print_doc(self.stats.ticket_id, "ticket")
+        file = self.doc.print_doc(self.stats.ticket_id, "ticket")
+        file_path = Path(file)
+        self.printer.send_file_to_printer(file_path)
 
         path = Path('id_tickets.json')
         txt = json.dumps(self.stats.ticket_id)
@@ -47,7 +50,9 @@ class Generator:
             self.doc.add_ticket(f"parking_ticket{self.stats.parking_ticket_id}.png")
             self.stats.parking_ticket_id += 1
 
-        self.doc.print_doc(self.stats.parking_ticket_id, "parking_ticket")
+        file = self.doc.print_doc(self.stats.parking_ticket_id, "parking_ticket")
+        file_path = Path(file)
+        self.printer.send_file_to_printer(file_path)
 
         # Save the ticket ID so each guest gets unique ID's
         path = Path('id_parking_tickets.json')

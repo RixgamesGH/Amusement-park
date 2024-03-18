@@ -1,6 +1,7 @@
 import os.path
 
 import pygame
+from printer import Printer
 from settings import Settings
 from change_settings import ChangeSettings
 from button import Button
@@ -18,6 +19,9 @@ class Main:
     def __init__(self):
         """Initialize program and create resources"""
         pygame.init()
+
+        # Initialize the printer first to make sure Adobe is installed
+        self.printer = Printer()
 
         # Set up a clock we'll use for the loop
         self.clock = pygame.time.Clock()
@@ -80,7 +84,7 @@ class Main:
         self.wrong_pin = False
         self.cashier = False
 
-        # Define the steps and set step 1 on active, rest inactive
+        # Define the steps and set step 0 on active, rest inactive
         self.step0 = True
         self.step1 = False
         self.custom_number = False
@@ -93,6 +97,7 @@ class Main:
         self.step7 = False
         self.parking_ticket_selection = False
         self.print_receipt = False
+        self.loading = False
         self.multiselect = 1
 
     def run_program(self):
@@ -100,6 +105,13 @@ class Main:
         while True:
             self._check_events()
             self._update_screen()
+            if self.loading:
+                self.generator.generate_tickets()
+                if self.stats.parking_tickets:
+                    self.generator.generate_parking_tickets()
+                self._next_step()
+                self.loading = False
+                pygame.event.clear()
             if self.wrong_pin:
                 pygame.time.wait(2000)
                 self._next_step()
@@ -138,7 +150,7 @@ class Main:
 
     def _hover_text(self, button, mouse_pos):
         """Make it so when you hover over the button the text color changes"""
-        if button.rect.collidepoint(mouse_pos):
+        if button.rect.collidepoint(mouse_pos) and not self.loading:
             button.button_txt_color = (128, 128, 128)
         else:
             button.button_txt_color = self.settings.button_txt_color
@@ -410,10 +422,7 @@ class Main:
                     self.step1 = True
                     self.step5 = False
                 if click_four:
-                    self.generator.generate_tickets()
-                    if self.stats.parking_tickets:
-                        self.generator.generate_parking_tickets()
-                    self._next_step()
+                    self.loading = True
 
             elif self.step6:
                 if click_two:
@@ -431,6 +440,8 @@ class Main:
                 self.amount = self._check_custom_number_selection(mouse_pos)
             if not self.custom_number and not self.cancel:
                 self._next_step()
+
+        pygame.event.clear()
 
     def _custom_number_selection(self, mouse_pos):
         """Make a menu for selecting a custom amount"""
@@ -516,6 +527,7 @@ class Main:
                 self.amount_txt = ""
                 if self.custom_number:
                     self.custom_number = False
+                    self.pin_check = False
                     self.cancel = True
                 if self.parking_ticket_selection:
                     self.parking_ticket_selection = False
@@ -615,6 +627,9 @@ class Main:
         self.screen.fill(self.settings.bg_color)
         if self.custom_number or self.parking_ticket_selection:
             self.text_box.draw_textbox(self.amount_txt)
+        if self.loading:
+            self.txt.text(f"{self.msg.loading}...", -275, -350)
+            self.B_four.button_txt_color = self.settings.button_txt_color
         self._draw_buttons_and_text()
 
         pygame.display.flip()

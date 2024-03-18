@@ -58,4 +58,5 @@ class Msg:
         # Price total count
         self.price_count = file_texts["price_count"]
 
-
+        # Loading message while waiting on printer to print
+        self.loading = file_texts["loading"]

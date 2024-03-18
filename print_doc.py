@@ -34,3 +34,5 @@ class PrintDoc:
         file.close()
         convert(input_file, output_file)
         os.remove(input_file)
+
+        return output_file
