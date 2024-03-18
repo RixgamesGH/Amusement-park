@@ -17,7 +17,7 @@ class Printer:
     def send_file_to_printer(self, file):
         """Sends a file to be added to the queue of the default printer"""
         printer = printfactory.Printer()
-        print_tool = printfactory.AdobeAcrobat(printer, self.app_path, timeout=8)
+        print_tool = printfactory.AdobeAcrobat(printer, self.app_path, timeout=10)
 
         try:
             print_tool.print_file(file)

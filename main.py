@@ -1,5 +1,3 @@
-import os.path
-
 import pygame
 from printer import Printer
 from settings import Settings
@@ -96,8 +94,8 @@ class Main:
         self.step6 = False
         self.step7 = False
         self.parking_ticket_selection = False
-        self.print_receipt = False
         self.loading = False
+        self.saving_receipt = False
         self.multiselect = 1
 
     def run_program(self):
@@ -105,19 +103,22 @@ class Main:
         while True:
             self._check_events()
             self._update_screen()
+
             if self.loading:
-                self.generator.generate_tickets()
-                if self.stats.parking_tickets:
-                    self.generator.generate_parking_tickets()
                 self._next_step()
                 self.loading = False
                 pygame.event.clear()
-            if self.wrong_pin:
-                pygame.time.wait(2000)
+            elif self.saving_receipt:
                 self._next_step()
-            if self.step7:
+                self.saving_receipt = False
+                pygame.event.clear()
+            elif self.step7:
                 pygame.time.wait(5000)
                 self._next_step()
+            elif self.wrong_pin:
+                pygame.time.wait(2000)
+                self._next_step()
+
             self.clock.tick(60)
 
     def _check_events(self):
@@ -150,7 +151,7 @@ class Main:
 
     def _hover_text(self, button, mouse_pos):
         """Make it so when you hover over the button the text color changes"""
-        if button.rect.collidepoint(mouse_pos) and not self.loading:
+        if button.rect.collidepoint(mouse_pos) and not self.loading and not self.saving_receipt:
             button.button_txt_color = (128, 128, 128)
         else:
             button.button_txt_color = self.settings.button_txt_color
@@ -426,11 +427,11 @@ class Main:
 
             elif self.step6:
                 if click_two:
-                    self.print_receipt = True
-                    self._next_step()
+                    self.stats.print_receipt = True
+                    self.saving_receipt = True
                 if click_four:
-                    self.print_receipt = False
-                    self._next_step()
+                    self.stats.print_receipt = False
+                    self.saving_receipt = True
 
         # Run selection for larger groups
         if self.custom_number:
@@ -600,17 +601,16 @@ class Main:
             self.step5 = True
 
         elif self.step5:
+            self.generator.generate_tickets()
+            if self.stats.parking_tickets:
+                self.generator.generate_parking_tickets()
+
             self.step5 = False
             self.step6 = True
 
         elif self.step6:
             self.generator.generate_receipt()
             move_files_to_dir()
-
-            if self.print_receipt:
-                file_path = os.path.join(os.getcwd(), "receipts")
-                file = os.path.join(file_path, f"receipt{self.stats.receipt_id - 1}.docx")
-                os.startfile(file)
 
             self.step6 = False
             if self.cashier:
@@ -630,6 +630,13 @@ class Main:
         if self.loading:
             self.txt.text(f"{self.msg.loading}...", -275, -350)
             self.B_four.button_txt_color = self.settings.button_txt_color
+        if self.saving_receipt:
+            if self.stats.print_receipt:
+                self.txt.text(f"{self.msg.loading}...", 275, -350)
+                self.B_two.button_txt_color = self.settings.button_txt_color
+            else:
+                self.txt.text(f"{self.msg.saving}...", -275, -350)
+                self.B_four.button_txt_color = self.settings.button_txt_color
         self._draw_buttons_and_text()
 
         pygame.display.flip()

@@ -1,7 +1,7 @@
 from print_doc import PrintDoc
 from make_ticket import Ticket
-from pathlib import Path
 from make_receipt import Receipt
+from pathlib import Path
 import json
 
 
@@ -78,7 +78,10 @@ class Generator:
         if self.stats.total_people >= 5:
             self.items["Group discount"] = float(f"{self.settings.discount * -1}")
 
-        self.receipt.save_receipt_to_docx(self.stats.receipt_id, self.items, self.settings.park_name)
+        file = self.receipt.save_receipt_to_docx(self.stats.receipt_id, self.items, self.settings.park_name)
+        file_path = Path(file)
+        if self.stats.print_receipt:
+            self.printer.send_file_to_printer(file_path)
 
         self.stats.receipt_id += 1
         path = Path('id_receipts.json')

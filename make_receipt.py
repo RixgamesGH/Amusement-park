@@ -1,8 +1,9 @@
 from datetime import datetime
-
+import os
 from jinja2 import Template
 from docx import Document
 from docx.shared import Pt
+from docx2pdf import convert
 
 
 class Receipt:
@@ -55,3 +56,12 @@ Total:                                               €{{ '%0.2f' % total|round
         filename = f"receipt{receipt_id}.docx"
         doc.save(filename)
         print(f"Receipt saved to {filename}")
+
+        # Convert to pdf
+        output_file = f"{filename.removesuffix('.docx')}.pdf"
+        file = open(output_file, "w")
+        file.close()
+        convert(filename, output_file)
+        os.remove(filename)
+
+        return output_file

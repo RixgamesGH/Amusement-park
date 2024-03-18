@@ -42,3 +42,4 @@ class PriceStats:
         self.age3 = 0
         self.age4 = 0
         self.parking_tickets = 0
+        self.print_receipt = False

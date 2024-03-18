@@ -60,3 +60,6 @@ class Msg:
 
         # Loading message while waiting on printer to print
         self.loading = file_texts["loading"]
+
+        # Loading message while waiting for the receipt to save
+        self.saving = file_texts["saving"]
