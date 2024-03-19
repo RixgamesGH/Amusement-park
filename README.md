@@ -1,7 +1,16 @@
 
 # Amusement Park
 
-This project is an interphase for a checkout system for amusement parks or similar places where ticket entry is required. I made this project for an assignment at school. The project is written entirely in Python and the frontend is done with the use of the pygame library.
+This project is an interphase for a checkout system for amusement parks or similar places where ticket entry is required. \
+I made this project for an assignment at school. The project is written entirely in Python and the frontend is done with the use of the pygame library.
+
+### Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Initial setup](#initial-setup)
+- [Autors](#authors)
+
 
 ## Features
 
