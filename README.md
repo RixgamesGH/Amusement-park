@@ -21,6 +21,8 @@ After having done this, unzip the file and make sure it's on the C drive. \
 You now have a map with some files. You can run the program by starting the exe file. \
 ![File in question](docs/Installation.png)
 
+The first time you start the file you'll be asked to enter a license code for PySimpleGUI. Simply copy the code from this [file](docs/PySimpleGUI-license).
+
 ## Authors
 
 - [@RixgamesGH](https://github.com/RixgamesGH)
