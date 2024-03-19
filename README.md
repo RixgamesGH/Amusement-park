@@ -7,6 +7,7 @@ I made this project for an assignment at school. The project is written entirely
 ### Contents
 
 - [Features](#features)
+  - [Additional requirements](#additional-requirements)
 - [Installation](#installation)
 - [Initial setup](#initial-setup)
 - [Autors](#authors)
@@ -25,13 +26,15 @@ I made this project for an assignment at school. The project is written entirely
 
 ## Installation
 
-The program requires you to have a version of Adobe Reader or Acrobat installed. Make sure you have this installed on your device's C drive.
-
-After having done that, you can download the zip file found in [Releases](https://github.com/RixgamesGH/Amusement-park/releases). \
+You can download the zip file found in [Releases](https://github.com/RixgamesGH/Amusement-park/releases). \
 Then, unzip the file and make sure it's on the C drive. \
 You now have a map with some files. You can run the program by starting the exe file.
 
 ![File in question](docs/Installation.png)
+
+#### Additional requirements
+- Adobe Reader or Acrobat. Make sure you have this installed on your device's C drive.
+- Microsoft Word
 
 
 ## Initial setup
@@ -44,7 +47,6 @@ After that there will be some questions asked for the initial setup of the setti
 - Group discount information
 
 All the information, except for the park name,  needs to be exclusively numbers, with optionally decimals (for example: 9.99)
-
 
 ## Authors
 
