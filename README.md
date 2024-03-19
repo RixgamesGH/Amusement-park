@@ -28,7 +28,7 @@ You now have a map with some files. You can run the program by starting the exe 
 ## Initial setup
 
 The first time you start the file you'll be asked to enter a license code for PySimpleGUI. Simply copy the code from this [file](docs/PySimpleGUI-license).\
-After that there will be some questions asked for the initial setup of the settings. It will ask for: \
+After that there will be some questions asked for the initial setup of the settings. It will ask for:
 - The PIN to access the staff section
 - The name of the park
 - The prizes for each age category
