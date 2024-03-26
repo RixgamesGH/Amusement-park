@@ -1,7 +1,7 @@
 
 # Amusement Park
 
-This project is an interphase for a checkout system for amusement parks or similar places where ticket entry is required. \
+This project is an interface for a checkout system for amusement parks or similar places where ticket entry is required. \
 I made this project for an assignment at school. The project is written entirely in Python and the frontend is done with the use of the pygame library.
 
 ### Contents
@@ -11,7 +11,7 @@ I made this project for an assignment at school. The project is written entirely
 - [Installation](#installation)
 - [Initial setup](#initial-setup)
 - [Screenshots](#screenshots)
-  - [Interphase](#interphase)
+  - [interface](#interface)
   - [Example ticket](#example-tickets)
   - [Example receipt](#example-receipt)
 - [Authors](#authors)
@@ -26,7 +26,7 @@ I made this project for an assignment at school. The project is written entirely
 - Generates tickets and prints them with default printer
 - Option to print receipt as well
 - Customizable park name en prizes
-- Staff interphase
+- Staff interface
 
 
 ## Installation
@@ -46,7 +46,7 @@ You now have a map with some files. You can run the program by starting the exe 
 
 The first time you start the file you'll be asked to enter a license code for PySimpleGUI. Simply copy the code from this [file](docs/PySimpleGUI-license).\
 After that there will be some questions asked for the initial setup of the settings. It will ask for:
-- The PIN to access the staff interphase
+- The PIN to access the staff interface
 - The name of the park
 - The prizes for each age category
 - Group discount information
@@ -55,19 +55,19 @@ All the information, except for the park name,  needs to be exclusively numbers,
 
 ## Usage
 
-After the initial setup you can start using the program. When you start it up the first thing you'll see is [this interphase](#interphase).
+After the initial setup you can start using the program. When you start it up the first thing you'll see is [this interface](#interface).
 For self-checkout, guests are able to choose the language they want. For cashiers having to select the language everytime might become annoying.
 So for that you can go to "Staff only". You'll have to enter the PIN you set up initially to access this menu. After that there will be an option
-to activate the "Cashier interphase" as well as the options to close the app or change the settings from the initial setup.
+to activate the "Cashier interface" as well as the options to close the app or change the settings from the initial setup.
 
-If you wish to look at the ticket files made after having used the interphase for a while, you can find these in the same folder where you have the
+If you wish to look at the ticket files made after having used the interface for a while, you can find these in the same folder where you have the
 [exe file](#installation).
 
 ## Screenshots
 
-#### Interphase
+#### interface
 
-<img src="docs/interphase_1.png" height="300">
+<img src="docs/interface_1.png" height="300">
 
 #### Example tickets
 
