@@ -50,8 +50,19 @@ All the information, except for the park name,  needs to be exclusively numbers,
 
 ## Screenshots
 
-<img src="docs/example_ticket.png" alt="drawing" height="200" width="200">
+Interphase:
 
+<img src="docs/interphase_1.png" height="300">
+<br><br>
+
+Example tickets:
+
+<img src="docs/example_tickets.png" height="300">
+<br><br>
+
+Example receipt:
+
+<img src="docs/example_receipt.png">
 
 ## Authors
 
