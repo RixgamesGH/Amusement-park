@@ -50,7 +50,7 @@ All the information, except for the park name,  needs to be exclusively numbers,
 
 ## Screenshots
 
-<img src="docs/example_ticket.png" alt="drawing" height="200" width="200">
+<img src="docs/example_tickets.png" alt="drawing" height="200" width="200">
 
 
 ## Authors
