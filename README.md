@@ -2,7 +2,7 @@
 # Amusement Park
 
 This project is an interface for a checkout system for amusement parks or similar places where ticket entry is required. \
-I made this project for an assignment at school. The project is written entirely in Python and the frontend is done with the use of the pygame library.
+I made this project for an assignment at school. The project is written entirely in Python (version 3.11.4) and the frontend is done with the use of the pygame library.
 
 ### Contents
 
@@ -65,7 +65,7 @@ If you wish to look at the ticket files made after having used the interface for
 
 ## Screenshots
 
-#### interface
+#### Interface
 
 <img src="docs/interface_1.png" height="300">
 
