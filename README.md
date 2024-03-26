@@ -58,12 +58,10 @@ All the information, except for the park name,  needs to be exclusively numbers,
 #### Interphase
 
 <img src="docs/interphase_1.png" height="300">
-<br><br>
 
 #### Example tickets
 
 <img src="docs/example_tickets.png" height="300">
-<br><br>
 
 #### Example receipt
 
