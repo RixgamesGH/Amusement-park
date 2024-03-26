@@ -53,6 +53,16 @@ After that there will be some questions asked for the initial setup of the setti
 
 All the information, except for the park name,  needs to be exclusively numbers, with optionally decimals (for example: 9.99)
 
+## Usage
+
+After the initial setup you can start using the program. When you start it up the first thing you'll see is [this interphase](#interphase).
+For self-checkout, guests are able to choose the language they want. For cashiers having to select the language everytime might become annoying.
+So for that you can go to "Staff only". You'll have to enter the PIN you set up initially to access this menu. After that there will be an option
+to activate the "Cashier interphase" as well as the options to close the app or change the settings from the initial setup.
+
+If you wish to look at the ticket files made after having used the interphase for a while, you can find these in the same folder where you have the
+[exe file](#installation).
+
 ## Screenshots
 
 #### Interphase
