@@ -10,7 +10,12 @@ I made this project for an assignment at school. The project is written entirely
   - [Additional requirements](#additional-requirements)
 - [Installation](#installation)
 - [Initial setup](#initial-setup)
+- [Screenshots](#screenshots)
+  - [Interphase](#interphase)
+  - [Example ticket](#example-tickets)
+  - [Example receipt](#example-receipt)
 - [Authors](#authors)
+- [Acknowledgements](#acknowledgements)
 
 
 ## Features
@@ -50,17 +55,17 @@ All the information, except for the park name,  needs to be exclusively numbers,
 
 ## Screenshots
 
-Interphase:
+#### Interphase
 
 <img src="docs/interphase_1.png" height="300">
 <br><br>
 
-Example tickets:
+#### Example tickets
 
 <img src="docs/example_tickets.png" height="300">
 <br><br>
 
-Example receipt:
+#### Example receipt
 
 <img src="docs/example_receipt.png">
 
