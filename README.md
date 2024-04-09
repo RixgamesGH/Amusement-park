@@ -11,7 +11,7 @@ I made this project for an assignment at school. The project is written entirely
 - [Installation](#installation)
 - [Initial setup](#initial-setup)
 - [Screenshots](#screenshots)
-  - [interface](#interface)
+  - [Interface](#interface)
   - [Example ticket](#example-tickets)
   - [Example receipt](#example-receipt)
 - [Authors](#authors)
